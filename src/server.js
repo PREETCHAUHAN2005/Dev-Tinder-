@@ -9,7 +9,7 @@ app.post("/user", (req, res) => {
   res.send("WELcome user");
 });
 app.delete("/user", (req, res) => {
-  res.send("BYe user");
+  res.send("BYe user")   ;
 });
 
 // app.use("/test/2", (req, res) => {

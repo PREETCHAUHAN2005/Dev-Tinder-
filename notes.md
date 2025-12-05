@@ -4,4 +4,5 @@ dependencies - anuy package on which project is dependent
 
   difference between caret and tilda (^ vs ~)
   what are dependencies 
-  what is the use of -g while npm install
+  what is the use of -g while npm install 
+  new hw is ![alt text](image-1.png)
