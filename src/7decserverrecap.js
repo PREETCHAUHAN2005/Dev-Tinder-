@@ -1,6 +1,14 @@
 const express = require("express");
 const app = express();
 
+
+// app.use("/route",[rh1,rh2 ,rh3, rh4])
+// app.use("/route",rh1,rh2 ,rh3, [rh4])
+// app.use("/route",[rh1,rh2] ,rh3, rh4)
+
+// Gives Same Result
+
+
 app.use("/hello", [
   (req, res, next) => {
     // res .send("Hello Preet!");
