@@ -14,3 +14,10 @@ dependencies - anuy package on which project is dependent
   also i read the uber blog for Schemaless part 1 
   remaining  part 2 and part 3
 
+DB HOMEWORK - ![alt text](image-2.png)
+
+Error Handlng usng - TRy and Catch
+dFFERENCE BTW JS OBJECT AND JSON
+ADD the express.json middleware to your app
+
+home wor 14 dec :![alt text](image-3.png)
