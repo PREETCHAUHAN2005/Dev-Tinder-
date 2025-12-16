@@ -5,7 +5,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-
+    minlength:5,
+    maxlength:20,
   },
   lastname: {
     type: String,
@@ -16,36 +17,37 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    trim: true,
+    lowercase: true,
   },
   password: {
     type: String,
     required: true,
     unique: true,
   },
-  age:{
+  age: {
     type: Number,
-
   },
-  gender:{
+  gender: {
     type: String,
-
+    validate(value) {
+      if (!["male", "female", "others"].includes(value)) {
+        throw new Error("Gender data is not valid");
+      }
+    },
   },
-  photoUrl:{
+  photoUrl: {
     type: String,
-    default:""
-
+    default: "https://github.com/PREETCHAUHAN2005",
   },
-  About:{
+  About: {
     type: String,
-    default: "Hello! I am using DevTinder."
-
-  } ,
-  skills:{
+    default: "Hello! I am using DevTinder.",
+  },
+  skills: {
     type: [String],
-  }
-  
-
-
-}); 
+    default: ["node.js", "react.js", "mongoDB"],
+  },
+},{timestamps:true, });
 
 module.exports = mongoose.model("userModel", userSchema);
