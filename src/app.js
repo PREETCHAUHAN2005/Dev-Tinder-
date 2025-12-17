@@ -3,20 +3,37 @@ const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user.js");
 const user = require("./models/user.js");
+const { validateSignUpData } = require("./utils/validation.js");
+const bcrypt = require("bcrypt");
 
 app.use(express.json());
 
+
+
 app.post("/signup", async (req, res) => {
+  const { firstname, lastname, email, password } = req.body;
   try {
-    const user = new User(req.body);
-    //     const user = new User({
-    //  Creartng a new nstance of a user model
-    // firstname: "MS",
-    // lastname: "Dhon",
-    // email:"preet" + Date.now() + "@chauhan.com",
-    // password: "Dhon1234",
-    // _id:"693be6e2db0ab756000a2ec2",
-    //   });
+    // VAlidation of data
+    validateSignUpData(req);
+    // const user = new User(req.body) ;
+
+    const { password } = req.body;
+
+    //    Encrypt the password
+
+    // const passwordHash = await bcrypt.hash(password, 10);
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync("B4c0//", salt);
+    console.log(hash);
+
+    // Creating a new instance of the user
+
+    const user = new User({
+      firstname,
+      lastname,
+      email,
+      password: hash,
+    });
     await user.save(); // Saving the user instance to the database
     res.send("User signed up successfully");
   } catch (error) {
@@ -86,19 +103,41 @@ app.delete("/user", async (req, res) => {
 });
 
 app.patch("/user", async (req, res) => {
-  const userId = req.body.userId;
+  const userId = req.params?.userId;
   const data = req.body;
-
   try {
-    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
-      returnDocument: "after",
-      runValidators: true,
-    });
-      console.log(user);
-      res.send("User updated successfully");
+    const ALLOWED_UPDATES = [
+      "firstname",
+      "lastname",
+      "email",
+      "password",
+      "gender",
+      "age",
+      "skills",
+    ];
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATES.includes(k)
+    );
+    if (!isUpdateAllowed) {
+      throw new Error("Update not Allowed");
+      if (data?.skills.length > 10) {
+        throw new Error("Skills cannot be more than 10");
+      }
+    }
   } catch (error) {
-    res.status(400).send("Update Failed: " + error.message);
+    console.log("error");
   }
+
+  // try {
+  //   const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+  //     returnDocument: "after",
+  //     runValidators: true,
+  //   });
+  //     console.log(user);
+  //     res.send("User updated successfully");
+  // } catch (error) {
+  //   res.status(400).send("Update Failed: " + error.message);
+  // }
 });
 connectDB()
   .then(() => {
