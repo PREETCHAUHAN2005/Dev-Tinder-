@@ -2,13 +2,15 @@ const express = require("express");
 const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user.js");
-const user = require("./models/user.js");
+// const user = require("./models/user.js");
 const { validateSignUpData } = require("./utils/validation.js");
 const bcrypt = require("bcrypt");
-
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const { key } = require("./utils/constants.js");
+const { userAuth } = require("./middleware/auth.js");
 app.use(express.json());
-
-
+app.use(cookieParser());
 
 app.post("/signup", async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
@@ -17,13 +19,13 @@ app.post("/signup", async (req, res) => {
     validateSignUpData(req);
     // const user = new User(req.body) ;
 
-    const { password } = req.body;
+    // const { password, email } = req.body;
 
     //    Encrypt the password
 
     // const passwordHash = await bcrypt.hash(password, 10);
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync("B4c0//", salt);
+    const hash = bcrypt.hashSync(password, salt);
     console.log(hash);
 
     // Creating a new instance of the user
@@ -39,6 +41,62 @@ app.post("/signup", async (req, res) => {
   } catch (error) {
     res.status(400).send("Error signing up: " + error.message);
   }
+});
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      throw new Error("Invalid Credentials");
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (isPasswordValid) {
+      // Create a JWT Token
+
+      const token = await jwt.sign({ _id: user._id }, key,{expiresIn:'7s'});
+      console.log(token);
+      // Add the cookie to the server and send the response back to the server
+      res.cookie("token", token);
+      res.send("Login Succesful");
+    } else {
+      throw new Error("Invalid Credentials");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("Error: " + error.message);
+  }
+});
+
+app.get("/profile", userAuth, async (req, res) => {
+  try {
+    const cookies = req.cookies;
+    // console.log(cookies);
+    const { token } = cookies;
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const decodedMessage = jwt.verify(token, key);
+    const { _id } = decodedMessage;
+    // console.log("Logged in user id is :" + _id);
+    const user = await User.findById(_id);
+
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+
+    // console.log(decodedMessage);
+    res.send(user);
+  } catch (err) {
+    res.status(400).send("Error: " + err.message);
+  }
+});
+
+app.post("/sentConnectionRequest",userAuth, async (req, res, next) => {
+  console.log("sending a  connection request");
+  res.send("connection request sent successfully");
 });
 
 app.get("/user", async (req, res) => {
@@ -139,6 +197,7 @@ app.patch("/user", async (req, res) => {
   //   res.status(400).send("Update Failed: " + error.message);
   // }
 });
+
 connectDB()
   .then(() => {
     console.log("Database connected successfully");

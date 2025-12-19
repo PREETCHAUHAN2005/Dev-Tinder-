@@ -24,3 +24,10 @@ home wor 14 dec :![alt text](image-3.png)
 Homewor 15 dec:![alt text](image-4.png)
 
 17 dec:![alt text](image-5.png)
+18 dec: ![alt text](image-6.png)
+
+<!--  install cookie parser first then send a duumy cookie to user 
+3. create GEt/profikle paisend the cookie back
+4.install  web token and
+5.in login api after email and password validatioon create a jwt token and send it back to user inside cookies 
+6. read rthe cookies inside your profile api and find the login in user  -->
