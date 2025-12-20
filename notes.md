@@ -30,4 +30,8 @@ Homewor 15 dec:![alt text](image-4.png)
 3. create GEt/profikle paisend the cookie back
 4.install  web token and
 5.in login api after email and password validatioon create a jwt token and send it back to user inside cookies 
-6. read rthe cookies inside your profile api and find the login in user  -->
+6. read rthe cookies inside your profile api and find the login in user
+
+7. Create userSchema methodf to getJWT()  
+create userSchema method to compare password
+-->
