@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
+const JWT = require("jsonwebtoken");
 const User = require("../models/user.js");
-const key = require("../utils/constants.js");
+const {key} = require("../utils/constants.js");
 
 const adminAuth = (req, res, next) => {
   const token = "xyz";
@@ -25,18 +25,19 @@ const adminAuth = (req, res, next) => {
 
 const userAuth = async (req, res, next) => {
   try {
-    const token = req.cookies;
+    const {token} = req.cookies;
     if(!token){
       throw new error("Token is not valid")
     }
 
-    const decodedObj = await jwt.verify(token, key);
+    const decodedObj = await JWT.verify(token, key);
     const { _id } = decodedObj;
 
     const user = await User.findById(_id);
     if (!user) {
       throw new error("User does not exist");
     }
+    req.user=user;
     next();
   } catch (err) {
     res.status(401).send("ERROR" + err.message);

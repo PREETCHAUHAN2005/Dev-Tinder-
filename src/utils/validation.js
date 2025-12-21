@@ -12,7 +12,8 @@ const validateSignUpData = (req) => {
     //     throw new Error ("First name must be between 1 and 20 characters"); // can ve handled by user.js
   } else if (!validator.isEmail(email)) {
     throw new Error("Invalid email address: " + email);
-  } else if (!validator.isStrongPassword(password)) {
+  }
+   else if (!validator.isStrongPassword(password)) {
     throw new Error("Please Enter a Strong Password  ");
   }
 };
