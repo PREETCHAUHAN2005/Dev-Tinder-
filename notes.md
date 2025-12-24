@@ -35,3 +35,5 @@ Homewor 15 dec:![alt text](image-4.png)
 7. Create userSchema methodf to getJWT()  
 create userSchema method to compare password
 -->
+
+22 dec 2025 HomeWork![alt text](image-7.png)

@@ -21,7 +21,7 @@ authRouter.post("/signup", async (req, res) => {
   try {
     // VAlidation of data
     validateSignUpData(req);
-    const passwordHash= await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
     // const salt = bcrypt.genSaltSync(10);
     // const hash = bcrypt.hashSync(password, salt);
     // console.log(hash);
@@ -43,9 +43,9 @@ authRouter.post("/signup", async (req, res) => {
 
 authRouter.post("/login", async (req, res) => {
   try {
-    const { email,password } = req.body;
+    const { email, password } = req.body;
 
-    const user = await User.findOne({email:email.toLowercase()});
+    const user = await User.findOne({ email });
     if (!user) {
       throw new Error("Invalid Credentials");
     }
@@ -57,12 +57,13 @@ authRouter.post("/login", async (req, res) => {
       const token = await user.getJWT();
       console.log(token);
       // Add the cookie to the server and send the response back to the server
-      res.cookie("token", token ,{expires: new Date(Date.now() + 8 + 3600000),
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 + 3600000),
         httpOnly: true,
       });
 
       // {
-        
+
       res.send("Login Succesful");
     } else {
       throw new Error("Invalid Credentials");
@@ -71,6 +72,15 @@ authRouter.post("/login", async (req, res) => {
     console.log(error);
     res.status(400).send("Error: " + error.message);
   }
+});
+
+authRouter.post("/logout", async (req, res) => {
+  res
+    .cookie("token", null, {
+      httpOnly: true,
+      expires: new Date(Date.now()),
+    })
+    .send("Logout Succesfull");
 });
 
 module.exports = authRouter;
