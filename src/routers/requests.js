@@ -7,4 +7,4 @@ reqRouter.post("/sentConnectionRequest", userAuth, async (req, res, next) => {
   console.log("sending a  connection request");
   res.send("connection request sent successfully");
 });
-module.exports = reqRouter;
+module.exports = reqRouter; 
