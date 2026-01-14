@@ -1,4 +1,5 @@
 # DevTinder APIs
+It consists all the APIs necessary for my Dev Tinder Platform.
 
 ## authRouter
 
