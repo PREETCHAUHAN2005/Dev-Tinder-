@@ -4,3 +4,5 @@ Here developers can mae new friends and also senior developer can guide their ju
 
 # TARGET
 TO CREATE A PLATFORM WHICH HELPS ME IN GAINING KNOWLEDGE OF BACKEND 
+
+# BENEFITS 
