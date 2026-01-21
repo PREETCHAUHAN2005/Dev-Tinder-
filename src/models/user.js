@@ -5,12 +5,14 @@ const { key } = require("../utils/constants");
 const jwt = require("jsonwebtoken");
 const { message } = require("statuses");
 const { schema } = mongoose;
+const User = require("./user.js");
 const userSchema = new mongoose.Schema(
   {
     firstname: {
       type: String,
       required: true,
       // unique: true,
+      index: true,
       minlength: 5,
       maxlength: 20,
     },
@@ -40,11 +42,11 @@ const userSchema = new mongoose.Schema(
       type: Number,
     },
 
-    gender:{
-      type:String,
-      required:true,
-      enum:["male","female","others"],
-      message:`{VALUE} is not supported`  
+    gender: {
+      type: String,
+      required: true,
+      enum: ["male", "female", "others"],
+      message: `{VALUE} is not supported`,
     },
     // gender: {
     //   type: String,
@@ -52,7 +54,8 @@ const userSchema = new mongoose.Schema(
     //     if (!["male", "female", "others"].includes(value)) {
     //       throw new Error("Gender data is not valid");
     //     }
-      // },
+    // },+
+
     // },
     photoUrl: {
       type: String,
@@ -74,6 +77,9 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+// User.find({ firstName: "Preet", lastName: "Chauhan" });
+userSchema.index({ firstName: 1, lastName: 1 });
+
 userSchema.methods.getJWT = async function () {
   const user = this;
 
@@ -85,7 +91,10 @@ userSchema.methods.validatePassword = async function (passwordInputByUser) {
   const user = this;
   const passwordHash = user.password;
 
-  const isPasswordValid = await bcrypt.compare(passwordInputByUser, passwordHash);
+  const isPasswordValid = await bcrypt.compare(
+    passwordInputByUser,
+    passwordHash
+  );
   return isPasswordValid;
 };
 

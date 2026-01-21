@@ -37,3 +37,4 @@ create userSchema method to compare password
 -->
 
 22 dec 2025 HomeWork![alt text](image-7.png)
+HW 21 JAN 2026 ![alt text](image-8.png)

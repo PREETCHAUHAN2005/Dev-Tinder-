@@ -3,6 +3,7 @@ const connectDB = require("./config/database");
 const app = express();
 exports.app = app;
 const User = require("./models/user.js");
+
 // const user = require("./models/user.js");
 
 const cookieParser = require("cookie-parser");
@@ -12,7 +13,7 @@ const { key } = require("./utils/constants.js");
 const authRouter = require("./routers/authroute.js");
 const profileRouter = require("./routers/authProfile.js");
 const reqRouter = require("./routers/requests.js");
-const 
+const { connectionRequest } = require("./models/connectionRequest.js");
 
 app.use(express.json());
 app.use(cookieParser());
