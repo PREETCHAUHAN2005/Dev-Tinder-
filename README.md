@@ -6,3 +6,4 @@ Here developers can mae new friends and also senior developer can guide their ju
 TO CREATE A PLATFORM WHICH HELPS ME IN GAINING KNOWLEDGE OF BACKEND 
 
 # BENEFITS 
+Teaches real world applicaton of backend development by Node.js.
