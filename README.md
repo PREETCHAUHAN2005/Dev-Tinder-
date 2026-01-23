@@ -7,3 +7,5 @@ TO CREATE A PLATFORM WHICH HELPS ME IN GAINING KNOWLEDGE OF BACKEND
 
 # BENEFITS 
 Teaches real world applicaton of backend development by Node.js.
+Mainly focused on connecting developers so it acts as the platform for the developers to connect wth their fellow developers and share their experience and learnings.
+It saves time for busy develpers.
