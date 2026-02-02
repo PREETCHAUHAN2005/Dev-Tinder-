@@ -14,6 +14,7 @@ const authRouter = require("./routers/authroute.js");
 const profileRouter = require("./routers/authProfile.js");
 const reqRouter = require("./routers/requests.js");
 const { connectionRequest } = require("./models/connectionRequest.js");
+const userRouter = require("./routers/user.js");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", reqRouter);
+app.use("/", userRouter);
 
 app.get("/user", async (req, res) => {
   // Expect email to be provided as a query parameter (e.g. /user?email=foo@bar.com)
