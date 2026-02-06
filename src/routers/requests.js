@@ -7,7 +7,7 @@ const { message } = require("statuses");
 const { User } = require("../models/user.js");
 
 reqRouter.post(
-  "/request/send/:status/:toUserId",
+  "/request/send/status/toUserId",
   userAuth,
 
   async (req, res, next) => {
@@ -30,7 +30,7 @@ reqRouter.post(
         return res.status(404).json({ message: " User not Found" });
       }
 
-      const existingConnectionRequest = await connectionRequest.findOne({
+      const existingConnectionRequest = await ConnectionRequest.findOne({
         $or: [
           {
             fromUserId,
@@ -44,7 +44,7 @@ reqRouter.post(
           .status(400)
           .send({ message: " Connection Request already Exists" });
       }
-      const ConnectionRequest = new connectionRequest({
+      const connectionRequest = new ConnectionRequest({
         fromUserId,
         toUserId,
         status,
@@ -62,7 +62,7 @@ reqRouter.post(
 );
 
 reqRouter.post(
-  "/request/review/:status/:requestId",
+  "/request/review/status/requestId",
   userAuth,
   async (req, res, next) => {
     try {
@@ -78,7 +78,7 @@ reqRouter.post(
           toUserId: loggedInUser._id,
           status: "interested",
         });
-        if (!connectionRequest) {
+        if (!connectionRequest){
           return res
             .status(404)
             .json({ message: "Connection request  not found" });

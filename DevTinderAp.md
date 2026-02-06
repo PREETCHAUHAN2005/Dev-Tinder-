@@ -9,8 +9,8 @@ It consists all the APIs necessary for my Dev Tinder Platform.
 
 ## profileRouter
 
-- GET/profile/vew
-  -GET/profile/edit
+- GET/profile/view
+  GET/profile/edit
 - POST/profile/password
 
 ## connection request Router -
@@ -23,5 +23,5 @@ It consists all the APIs necessary for my Dev Tinder Platform.
 ## userRouter
 
 - GET/user/connections
-- GET/user/requests
+- GET/user/requests/recieved
 - GET/user/feed- gets you the profile of other users on platform
