@@ -5,7 +5,7 @@ const { userAuth } = require("../middleware/auth.js");
 const { User, populate } = require("../models/user.js");
 
 const ConnectionRequests = require("../models/connectionRequest.js");
-const { connection } = require("mongoose");
+const { connection, connections } = require("mongoose");
 const User_Safe_Data = "firstname lastname email";
 
 userRouter.get("/user/request/received", userAuth, async (req, res) => {
@@ -51,5 +51,21 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
   }
 });
 
+userRouter.get("/user/feed", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    // A person shoud not see in his feed include
+    // 1.Card of his own
+    // card of people whom he sent request already
+    // Card of people who rejected or accepted his request
+    // 4.card of people who sent request to him but he rejected or acceted
+    // 5.his connections
+
+
+
+  } catch (error) {
+    error.status(400).json({ message: error.message });
+  }
+});
+
 module.exports = userRouter;
- 
