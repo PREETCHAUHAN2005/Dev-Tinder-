@@ -3,15 +3,19 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { Base_Url } from "../utils/constants";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("ycombinator123@gmail.com");
   const [password, setPassword] = useState("Preetch@547y395y6");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [error,setError ] = useState("")
 
   const handleLogin = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:7777/login",
+        Base_Url + "/login",
         {
           email,
           password,
@@ -19,7 +23,9 @@ const Login = () => {
         { withCredentials: true }
       );
       dispatch(addUser(res.data));
-    } catch (error) {
+       return navigate("/");
+    } catch (err) {
+      setError(err?.response?.data || "An error occurred during login. Please try again.");
       console.error("Login failed:", error);
     }
   };
@@ -81,6 +87,8 @@ const Login = () => {
               At least one uppercase letter
             </p>
           </div>
+
+          <p className="text-red ">Error:{error}</p>
 
           <div className="card-actions justify-center">
             <button className="btn btn-primary " onClick={handleLogin}>
