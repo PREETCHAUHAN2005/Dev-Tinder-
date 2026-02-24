@@ -3,11 +3,11 @@ const validator = require("validator");
 const validateSignUpData = (req) => {
   const { firstname, lastname, email, password } = req.body;
   if (!firstname || firstname.trim() === "") {
-    errors.firstname = "First name is required";
+    throw new Error("First name is required");
   }
 
   if (!lastname || lastname.trim() === "") {
-    errors.lastname = "Last name is required";
+    throw new Error("Last name is required");
     //   }else if(firstName.length<1 || firstName.length>20){
     //     throw new Error ("First name must be between 1 and 20 characters"); // can ve handled by user.js
   } else if (!validator.isEmail(email)) {
@@ -26,15 +26,15 @@ const validateEditProfiledata = (req) => {
     "age",
     "about",
     "skills",
-    "photoURL",
+    "photoUrl",
   ];
 
-  const isEditAllowed = Object.keys(req.body).every((field) =>{
-     return allowedEditFields.includes(field)
-  })
+  const isEditAllowed = Object.keys(req.body).every((field) =>
+    allowedEditFields.includes(field)
+  );
+  return isEditAllowed;
 };
 module.exports = {
   validateSignUpData,
   validateEditProfiledata,
 };
- 

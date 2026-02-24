@@ -27,7 +27,7 @@ const userAuth = async (req, res, next) => {
   try {
     const {token} = req.cookies;
     if(!token){
-      res.status(401).send("Please login to access this resource");
+       return res.status(401).send("Please login to access this resource");
     }
 
     const decodedObj = await JWT.verify(token, key);
@@ -35,13 +35,13 @@ const userAuth = async (req, res, next) => {
 
     const user = await User.findById(_id);
     if (!user) {
-      throw new error("User does not exist");
+      throw new Error("User does not exist");
     }
     req.user=user;
     next();
   } catch (err) {
-    res.status(401).send("ERROR" + err.message);
-    return;
+    res.status(400).send("ERROR" + err.message);
+   
   }
 };
 module.exports = {

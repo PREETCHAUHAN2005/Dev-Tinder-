@@ -17,7 +17,7 @@ const { isLowercase } = require("validator");
 const authRouter = express.Router();
 
 authRouter.post("/signup", async (req, res) => {
-  const { firstname, lastname, email, password } = req.body;
+  const { firstname, lastname, email, password, gender} = req.body;
   try {
     // VAlidation of data
     validateSignUpData(req);
@@ -32,7 +32,8 @@ authRouter.post("/signup", async (req, res) => {
       firstname,
       lastname,
       email,
-      password: hash,
+      password: passwordHash,
+      gender: gender,
     });
     await user.save(); // Saving the user instance to the database
     res.send("User signed up successfully");
@@ -55,7 +56,7 @@ authRouter.post("/login", async (req, res) => {
       // Create a JWT Token
 
       const token = await user.getJWT();
-      console.log(token);
+      // console.log(token);
       // Add the cookie to the server and send the response back to the server
       res.cookie("token", token, {
         expires: new Date(Date.now() + 8 + 3600000),
@@ -69,7 +70,7 @@ authRouter.post("/login", async (req, res) => {
       throw new Error("Invalid Credentials");
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(400).send("Error: " + error.message);
   }
 });

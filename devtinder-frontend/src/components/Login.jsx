@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import { Base_Url } from "../utils/constants";
+import { Base_Url } from "../utils/Constants";
 import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("ycombinator123@gmail.com");
@@ -88,7 +88,7 @@ const Login = () => {
             </p>
           </div>
 
-          <p className="text-red ">Error:{error}</p>
+          <p className="text-red ">{error}</p>
 
           <div className="card-actions justify-center">
             <button className="btn btn-primary " onClick={handleLogin}>

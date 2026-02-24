@@ -2,8 +2,8 @@ const express = require("express");
 const userRouter = express.Router();
 
 const { userAuth } = require("../middleware/auth.js");
-const { User, populate } = require("../models/user.js");
-
+const User  = require("../models/user.js");
+// const populate = require("../models/user.js");
 const ConnectionRequests = require("../models/connectionRequest.js");
 const { connection, connections } = require("mongoose");
 const User_Safe_Data = "firstname lastname email";
@@ -14,13 +14,13 @@ userRouter.get("/user/request/received", userAuth, async (req, res) => {
 
     const connectionRequests = await ConnectionRequests.find({
       toUserId: loggedInUser._id,
-      status: "interseted",
+      status: "interested",
     }).populate("fromUserId", User_Safe_Data);
     // .populate("fromUserId", ["firstname", "lastname", "email");
 
     res.json({
       messaage: " Data fetched succesfully",
-      data: ConnectionRequests,
+      data: connectionRequests,
     });
   } catch (error) {
     res.status(400).send("Error :" + error.message);
@@ -36,16 +36,17 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
         { fromUserId: loggedInUser._id, status: "accepted" },
         { toUserId: loggedInUser._id, status: "accepted" },
       ],
-    }).populate("fromUserId", User_Safe_Data);
+    }).populate("fromUserId", User_Safe_Data)
+    .populate("toUserId", User_Safe_Data);
 
     const data = connectionsRequest.map((row) => {
-      if (row.fromUserId._id.toString() === row.toUserId._id.toString()) {
+      if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
         return row.toUserId;
       }
       return row.fromUserId;
     });
 
-    res.json({ data: connectionsRequest });
+    res.json({ data: data });
   } catch (error) {
     res.status(400).send("Error :" + error.message);
   }
@@ -63,33 +64,34 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
     // 5.his connections
 
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    let limit = parseInt(req.query.limit) || 10;
     limit = limit > 50 ? 50 : limit;
     const skip = (page - 1) * limit;
 
-    const connectionRequest = await ConnectionRequests.fnd({
+    const connectionRequest = await ConnectionRequests.find({
       $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
     }).select("fromUserId toUserId");
 
-    const hidenUsersFromFeed = new set();
-    connectionRequest.find((req) => {
+    const hidenUsersFromFeed = new Set();
+    connectionRequest.forEach((req) => {
       hidenUsersFromFeed.add(req.fromUserId.toString());
       hidenUsersFromFeed.add(req.toUserId.toString());
     });
-    console.log("hidenUsersFromFeed", hidenUsersFromFeed);
+    // console.log("hidenUsersFromFeed", hidenUsersFromFeed);
 
     const users = await User.find({
       $and: [
         { _id: { $ne: loggedInUser._id } },
         { _id: { $nin: Array.from(hidenUsersFromFeed) } },
       ],
-    }).select(User_Safe_Data)
-    .skip(skip)
-    .limit(limit);
+    })
+      .select(User_Safe_Data)
+      .skip(skip)
+      .limit(limit);
 
-    res.json({ data: users }); 
+    res.json({ data: users });
   } catch (error) {
-    error.status(400).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
