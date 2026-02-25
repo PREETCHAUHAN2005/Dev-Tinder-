@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import { Base_Url } from "../utils/Constants";
+import  {Base_Url}  from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addfeed } from "../utils/feedSlice";
 import UserCard from "./UserCard";
@@ -8,7 +8,7 @@ import UserCard from "./UserCard";
 const Feed = () => {
   const dispatch = useDispatch();
   const feed = useSelector((store) => store.feed);
-  console.log(feed);
+  // console.log(feed);
 
   const getFeed = async () => {
     try {

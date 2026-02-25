@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 // import { set } from "mongoose";
 
-const EditProfile = (user) => {
+const EditProfile = ({ user }) => {
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
 
@@ -28,7 +28,7 @@ const EditProfile = (user) => {
           firstName,
           lastName,
           photoURL,
-          age,
+          age: Number(age),
           gender,
           about,
         },
@@ -40,9 +40,12 @@ const EditProfile = (user) => {
         setShowToast(false);
       }, 3000);
     } catch (err) {
-      setErr(
-        err.response.message || "An error occurred while saving the profile."
-      );
+      const errorMessage =
+        err.response?.data?.message ||
+        err.response?.data ||
+        "An error occurred";
+      console.log("Backend Error:", errorMessage);
+      setErr(errorMessage);
     }
   };
 

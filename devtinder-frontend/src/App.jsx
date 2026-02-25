@@ -18,6 +18,7 @@ function App() {
               <Route path="/" element={<Feed />} />
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/connections" element={<Profile />} />
             </Route>
             {/* <Route path="/about" element={<h1>About Page</h1>} />
     <Route path="/contact" element={<h1>Contact Page</h1>} /> */}
