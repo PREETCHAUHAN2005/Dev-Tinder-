@@ -25,10 +25,14 @@ const Requests = () => {
       <div className="flex justify-center my-10">
         <h1 className="text-bold text-2xl">Connections</h1>
         {requests.map((connection) => {
-          const { firstName, lastName, photoUrl, gender, about } = connection;
+          const { _id, firstName, lastName, photoUrl, gender, about } =
+            connection;
 
           return (
-            <div className="m-4 p-4 flex rounded-lg bg-base-300 w-1/2 mx-auto">
+            <div
+              key={_id}
+              className="m-4 p-4 flex rounded-lg bg-base-300 w-1/2 mx-auto"
+            >
               <div>
                 <img
                   alt="photo"
@@ -41,6 +45,12 @@ const Requests = () => {
                   {firstName + " " + lastName}
                 </h2>
                 <p>{about}</p>
+              </div>
+              <div>
+                <button className="btn btn-soft btn-primary">Primary</button>
+                <button className="btn btn-soft btn-secondary">
+                  Secondary
+                </button>
               </div>
             </div>
           );
