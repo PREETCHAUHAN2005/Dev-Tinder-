@@ -40,3 +40,5 @@ create userSchema method to compare password
 HW 21 JAN 2026 ![alt text](image-8.png)
 
 3 Feb 2026 HW ![alt text](image-9.png)
+
+27 feb HW ![alt text](image-10.png)
