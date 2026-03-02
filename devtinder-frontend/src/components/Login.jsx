@@ -3,14 +3,17 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import {Base_Url}  from "../utils/constants";
+import { Base_Url } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("ycombinator123@gmail.com");
   const [password, setPassword] = useState("Preetch@547y395y6");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [isLoginForm, setIsLoginForm] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error,setError ] = useState("")
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
     try {
@@ -22,19 +25,71 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-      dispatch(addUser(res.data));
-       return navigate("/");
+      dispatch(addUser(res.data.data));
+      return navigate("/");
     } catch (err) {
-      setError(err?.response?.data || "An error occurred during login. Please try again.");
+      setError(
+        err?.response?.data ||
+          "An error occurred during login. Please try again."
+      );
       console.error("Login failed:", error);
+    }
+  };
+  const handleSignUp = async () => {
+    try {
+      const res = await axios.post(
+        Base_Url + "/Signup",
+        {
+          firstName,
+          lastName,
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
+      dispatch(addUser(res.data.data));
+      return navigate("/profile");
+    } catch (err) {
+      setError(
+        err?.response?.data ||
+          "An error occurred during login. Please try again."
+      );
+      console.error("SignUp failed:", error);
     }
   };
   return (
     <div className="flex justify-center my-10">
       <div className="card card-border bg-base-300 w-96">
         <div className="card-body my-4">
-          <h2 className="card-title justify-center">Login</h2>
+          <h2 className="card-title justify-center">
+            {isLoginForm ? "Login to your account" : "Create a new account"}
+          </h2>
           <div className="my-4 space-evenly">
+            {!isLoginForm && (
+              <>
+                <fieldset className="fieldset ">
+                  <legend className="fieldset-legend">First Name</legend>
+                  <input
+                    value={firstName}
+                    type="text"
+                    className="input"
+                    placeholder="Enter your First Name"
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                </fieldset>
+                <fieldset className="fieldset ">
+                  <legend className="fieldset-legend">Last Name</legend>
+                  <input
+                    value={lastName}
+                    type="text"
+                    className="input"
+                    placeholder="Enter your Last Name"
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </fieldset>
+              </>
+            )}
+
             <fieldset className="fieldset ">
               <legend className="fieldset-legend">Email</legend>
               <input
@@ -91,14 +146,17 @@ const Login = () => {
           <p className="text-red ">{error}</p>
 
           <div className="card-actions justify-center">
-            <button className="btn btn-primary " onClick={handleLogin}>
-              Login
-            </button>
+            <button className="btn btn-primary " onClick={ isLoginForm ? handleLogin : handleSignUp}>
+             {isLoginForm ? "Login" : "Sign up" }   </button>
           </div>
+          <p className="m-auto cursor-pointer py-2" onClick={()=> setIsLoginForm( (value) => !value)}
+          >
+            {isLoginForm ? "New User? Sign Up Here" : "Existing User? Login Here "}
+          </p>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Login;   

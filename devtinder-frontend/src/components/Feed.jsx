@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import  {Base_Url}  from "../utils/constants";
+import { Base_Url } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addfeed } from "../utils/feedSlice";
 import UserCard from "./UserCard";
@@ -24,6 +24,7 @@ const Feed = () => {
   useEffect(() => {
     getFeed();
   }, []);
+  if (feed.length <= 0) return <h1 className="flex justify-center my-10">No new users Found!</h1>;
   return (
     feed && (
       <div className="flex justify-center my-10">
