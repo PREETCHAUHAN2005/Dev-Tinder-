@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { removeUserFromFeed } from "../utils/feedSlice";
 
 const UserCard = ({ user }) => {
-  const { _id, firstName, lastName, photoURL, age, gender, about } = user;
+  const { _id, firstname, lastname, photoUrl, age, gender, About } = user;
   const dispatch = useDispatch();
   const handleSendRequest = async (status, userId) => {
     try {
@@ -16,31 +16,31 @@ const UserCard = ({ user }) => {
           withCredentials: true,
         }
       );
-      dispatch(removeUserFromFeed(status, _id));
+      dispatch(removeUserFromFeed(_id));
     } catch (error) {}
   };
   return (
     <div>
       <div className="card bg-base-100 w-96 shadow-sm">
         <figure>
-          <img src={user.photoURL} alt="photo" />
+          <img src={user.photoUrl} alt="photo" />
         </figure>
         <div className="card-body">
-          <h2 className="card-title">{firstName + " " + lastName}</h2>
+          <h2 className="card-title">{firstname + " " + lastname}</h2>
           {age && gender && <p> {gender + ", " + age}</p>}
-          {about && <p>{about}</p>}
+          {About && <p>{About}</p>}
 
           <div className="card-actions justify-center flex space-x-6">
             <button
               className="btn btn-primary"
-              onClick={() => handleSendRequest("Ignore", _id)}
+              onClick={() => handleSendRequest("ignored", _id)}
             >
               Ignore
             </button>
 
             <button
               className="btn btn-secondary"
-              onClick={() => handleSendRequest("Interested", _id)}
+              onClick={() => handleSendRequest("interested", _id)}
             >
               Interested
             </button>

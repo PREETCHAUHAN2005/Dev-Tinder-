@@ -3,7 +3,7 @@ const express = require("express");
 const reqRouter = express.Router();
 const { userAuth } = require("../middleware/auth.js");
 const ConnectionRequest = require("../models/connectionRequest.js");
-const { message } = require("statuses");
+
 const User = require("../models/user.js");
 
 reqRouter.post(
@@ -52,7 +52,7 @@ reqRouter.post(
 
       const data = await connectionRequest.save();
       res.json({
-        message: req.user.firstName + "is" + status + "in" + toUser.firstname,
+        message: req.user.firstname + " is " + status + " in " + toUser.firstname,
         data,
       });
     } catch (error) {

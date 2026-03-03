@@ -12,7 +12,7 @@ const Feed = () => {
 
   const getFeed = async () => {
     try {
-      const res = await axios.get(Base_Url + "/feed", {
+      const res = await axios.get(Base_Url + "/user/feed", {
         withCredentials: true,
       });
       console.log(res);
@@ -24,7 +24,7 @@ const Feed = () => {
   useEffect(() => {
     getFeed();
   }, []);
-  if (feed.length <= 0) return <h1 className="flex justify-center my-10">No new users Found!</h1>;
+  if (!feed || feed.length <= 0) return <h1 className="flex justify-center my-10">No new users Found!</h1>;
   return (
     feed && (
       <div className="flex justify-center my-10">

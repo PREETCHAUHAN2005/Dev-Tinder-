@@ -3,16 +3,16 @@ import axios from "axios";
 import { Base_Url } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addRequests, removeRequests } from "../utils/requestSlice";
-import { request } from "express";
+
 
 const Requests = () => {
   const requests = useSelector((store) => store.requests);
   const dispatch = useDispatch();
 
-  const reviewRequest = (status, _id) => {
+  const reviewRequest = async (status, _id) => {
     try {
-      const res = axios.post(
-        Base_Url + "/request/review" + "/" + _id,
+      const res = await axios.post(
+        Base_Url + "/request/review/" + status + "/" + _id,
         {},
         { withCredentials: true }
 
@@ -22,8 +22,8 @@ const Requests = () => {
   };
   const fetchRequests = async () => {
     try {
-      const res = await axios.get(Base_Url + "/user/requests/recieved", {
-        withCredentialst: true,
+      const res = await axios.get(Base_Url + "/user/request/received", {
+        withCredentials: true,
       });
       dispatch(addRequests(res?.data?.data));
     } catch (error) {}
@@ -39,7 +39,7 @@ const Requests = () => {
       <div className="flex justify-center my-10">
         <h1 className="text-bold text-2xl">Requests</h1>
         {requests.map((request) => {
-          const { _id, firstName, lastName, photoUrl, gender, about } = request;
+          const { _id, firstname, lastname, photoUrl, gender, about } = request;
 
           return (
             <div
@@ -55,7 +55,7 @@ const Requests = () => {
               </div>
               <div className="text-left mx-4">
                 <h2 className="font-bold text-xl">
-                  {firstName + " " + lastName}
+                  {firstname + " " + lastname}
                 </h2>
                 <p>{about}</p>
               </div>

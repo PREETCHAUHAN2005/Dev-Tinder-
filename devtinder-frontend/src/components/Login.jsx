@@ -25,7 +25,7 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-      dispatch(addUser(res.data.data));
+      dispatch(addUser(res.data));
       return navigate("/");
     } catch (err) {
       setError(
@@ -38,16 +38,16 @@ const Login = () => {
   const handleSignUp = async () => {
     try {
       const res = await axios.post(
-        Base_Url + "/Signup",
+        Base_Url + "/signup",
         {
-          firstName,
-          lastName,
+          firstname: firstName,
+          lastname: lastName,
           email,
           password,
         },
         { withCredentials: true }
       );
-      dispatch(addUser(res.data.data));
+      dispatch(addUser(res.data.user));
       return navigate("/profile");
     } catch (err) {
       setError(

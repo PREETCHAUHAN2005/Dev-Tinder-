@@ -8,14 +8,14 @@ import { addUser } from "../utils/userSlice";
 // import { set } from "mongoose";
 
 const EditProfile = ({ user }) => {
-  const [firstName, setFirstName] = useState(user.firstName || "");
-  const [lastName, setLastName] = useState(user.lastName || "");
+  const [firstname, setFirstName] = useState(user.firstname || "");
+  const [lastname, setLastName] = useState(user.lastname || "");
 
   const [gender, setGender] = useState(user.gender || "");
   const [age, setAge] = useState(user.age || "");
 
-  const [about, setAbout] = useState(user.about || "");
-  const [photoURL, setPhotoURL] = useState(user.photoURL || "");
+  const [About, setAbout] = useState(user.About || "");
+  const [photoUrl, setPhotoURL] = useState(user.photoUrl || "");
   const [err, setErr] = useState("");
   const dispatch = useDispatch();
   const [showToast, setShowToast] = useState(false);
@@ -25,12 +25,12 @@ const EditProfile = ({ user }) => {
       const res = await axios.patch(
         Base_Url + "/profile/edit",
         {
-          firstName,
-          lastName,
-          photoURL,
+          firstname,
+          lastname,
+          photoUrl,
           age: Number(age),
           gender,
-          about,
+          About,
         },
         { withCredentials: true }
       );
@@ -60,7 +60,7 @@ const EditProfile = ({ user }) => {
                 <fieldset className="fieldset ">
                   <legend className="fieldset-legend">First name</legend>
                   <input
-                    value={firstName}
+                    value={firstname}
                     type="text"
                     className="input"
                     placeholder="Enter your First name"
@@ -72,7 +72,7 @@ const EditProfile = ({ user }) => {
                 <fieldset className="fieldset ">
                   <legend className="fieldset-legend">Last name</legend>
                   <input
-                    value={lastName}
+                    value={lastname}
                     type="text"
                     className="input"
                     placeholder="Enter your Last Name"
@@ -96,7 +96,7 @@ const EditProfile = ({ user }) => {
                 <fieldset className="fieldset ">
                   <legend className="fieldset-legend">About</legend>
                   <input
-                    value={about}
+                    value={About}
                     type="text"
                     className="input"
                     placeholder="Your Description"
@@ -120,7 +120,7 @@ const EditProfile = ({ user }) => {
                 <fieldset className="fieldset ">
                   <legend className="fieldset-legend">Photo Url</legend>
                   <input
-                    value={photoURL}
+                    value={photoUrl}
                     type="text"
                     className="input"
                     placeholder="Enter your Photo URL"
@@ -138,7 +138,7 @@ const EditProfile = ({ user }) => {
           </div>
         </div>
         <UserCard
-          user={{ firstName, lastName, photoURL, age, gender, about }}
+          user={{ firstname, lastname, photoUrl, age, gender, About }}
         />
       </div>
 

@@ -3,9 +3,7 @@ const validator = require("validator");
 const bcrypt = require("bcrypt");
 const { key } = require("../utils/constants");
 const jwt = require("jsonwebtoken");
-const { message } = require("statuses");
-const { schema } = mongoose;
-const User = require("./user.js");
+
 const userSchema = new mongoose.Schema(
   {
     firstname: {
@@ -29,14 +27,13 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       validate(value) {
         if (!validator.isEmail(value)) {
-          throw new error("Invalid email address: " + value);
+          throw new Error("Invalid email address: " + value);
         }
       },
     },
     password: {
       type: String,
       required: true,
-      unique: true,
     },
     age: {
       type: Number,
@@ -62,7 +59,7 @@ const userSchema = new mongoose.Schema(
 
       validate(value) {
         if (!validator.isURL(value)) {
-          throw new error("Invalid Photo address: " + value);
+          throw new Error("Invalid Photo address: " + value);
         }
       },
     },
@@ -78,7 +75,7 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 // User.find({ firstName: "Preet", lastName: "Chauhan" });
-userSchema.index({ firstName: 1, lastName: 1 });
+userSchema.index({ firstname: 1, lastname: 1 });
 
 userSchema.methods.getJWT = async function() {
   const user = this;

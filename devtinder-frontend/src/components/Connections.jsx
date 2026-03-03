@@ -3,7 +3,7 @@ import axios from "axios";
 import { Base_Url } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnection } from "../utils/connectionSlice";
-import { connections } from "mongoose";
+
 
 const Connections = () => {
   const connections = useSelector((store) => store.connections);
@@ -18,7 +18,7 @@ const Connections = () => {
       //   console.log(res.data);
     } catch (err) {
       // Handle Error Case
-      err.status(500).json({ message: "Failed to fetch connections" });
+      console.error("Failed to fetch connections:", err);
     }
   };
   useEffect(() => {
@@ -32,15 +32,15 @@ const Connections = () => {
       <div className="flex justify-center my-10">
         <h1 className="text-bold text-2xl">Connections</h1>
         {connections.map((connection) => {
-          const { firstName, lastName, photoUrl, gender, about } = connection;
+          const { firstname, lastname, photoUrl, gender, about } = connection;
 
           return (
-            <div className="m-4 p-4 flex rounded-lg bg-base-300 w-1/2 mx-auto">
+            <div key={connection._id} className="m-4 p-4 flex rounded-lg bg-base-300 w-1/2 mx-auto">
               <div>
                 <img alt="photo" className="w-20 h-20 rounded-full" src={photoUrl} />
               </div>
               <div className="text-left mx-4">
-                <h2 className="font-bold text-xl">{firstName + " " + lastName}</h2>
+                <h2 className="font-bold text-xl">{firstname + " " + lastname}</h2>
                 <p>{about}</p>
               </div>
             </div>

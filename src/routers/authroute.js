@@ -1,5 +1,5 @@
 const express = require("express");
-const connectDB = require("../config/database.js");
+
 // const { userAuth } = require("./middleware/auth.js");
 
 const { validateSignUpData } = require("../utils/validation.js");
@@ -8,9 +8,7 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 // const jwt = require ("jsonwebtoken");
 
-const { app } = require("../app");
 const User = require("../models/user");
-const { isLowercase } = require("validator");
 
 // const app = express();
 
@@ -60,7 +58,7 @@ authRouter.post("/login", async (req, res) => {
       // console.log(token);
       // Add the cookie to the server and send the response back to the server
       res.cookie("token", token, {
-        expires: new Date(Date.now() + 8 + 3600000),
+        expires: new Date(Date.now() + 8 * 3600000),
         httpOnly: true,
       });
 

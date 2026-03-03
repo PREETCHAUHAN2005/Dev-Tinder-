@@ -5,7 +5,6 @@ const { userAuth } = require("../middleware/auth.js");
 const User  = require("../models/user.js");
 // const populate = require("../models/user.js");
 const ConnectionRequests = require("../models/connectionRequest.js");
-const { connection, connections } = require("mongoose");
 const User_Safe_Data = "firstname lastname email";
 
 userRouter.get("/user/request/received", userAuth, async (req, res) => {
