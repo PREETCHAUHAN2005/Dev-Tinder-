@@ -45,3 +45,5 @@ HW 21 JAN 2026 ![alt text](image-8.png)
 
 Hw 2 MARCH-
 iMPLEMENT SIGNUP WITH ROUTE AND COMPONENT
+
+Homework 16 march aws frontend  ![alt text](image-11.png)
