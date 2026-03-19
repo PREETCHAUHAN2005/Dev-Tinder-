@@ -5,7 +5,7 @@ const { userAuth } = require("../middleware/auth.js");
 const User  = require("../models/user.js");
 // const populate = require("../models/user.js");
 const ConnectionRequests = require("../models/connectionRequest.js");
-const User_Safe_Data = "firstname lastname email";
+const User_Safe_Data = "firstname lastname email photoUrl age gender About ";
 
 userRouter.get("/user/request/received", userAuth, async (req, res) => {
   try {

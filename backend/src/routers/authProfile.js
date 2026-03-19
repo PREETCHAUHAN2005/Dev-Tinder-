@@ -1,5 +1,5 @@
 const express = require("express");
-const connectDB = require("../config/database");
+
 const User = require("../models/user");
 const profileRouter = express.Router();
 const { userAuth } = require("../middleware/auth.js");
@@ -43,10 +43,12 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
     });
 
     await loggedInUser.save();
-    res.send(
-      `${loggedInUser.firstname},"You succesfully updated your profile"`
-    );
-    console.log("Logged in user:", loggedInUser);
+    res.json({
+      message: `${loggedInUser.firstname},You succesfully updated your profile`,
+      data: loggedInUser,
+    });
+    // Remove after check
+    console.log("Logged in user:", loggedInUser); 
   } catch (err) {
     res.status(400).send("Error: " + err.message);
   }

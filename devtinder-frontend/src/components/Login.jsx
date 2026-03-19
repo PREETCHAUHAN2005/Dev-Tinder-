@@ -5,11 +5,13 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { Base_Url } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
+
 const Login = () => {
   const [email, setEmail] = useState("ycombinator123@gmail.com");
   const [password, setPassword] = useState("Preetch@547y395y6");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [gender, setGender] = useState("");
   const [isLoginForm, setIsLoginForm] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -44,6 +46,7 @@ const Login = () => {
           lastname: lastName,
           email,
           password,
+          gender,
         },
         { withCredentials: true }
       );
@@ -85,6 +88,16 @@ const Login = () => {
                     className="input"
                     placeholder="Enter your Last Name"
                     onChange={(e) => setLastName(e.target.value)}
+                  />
+                </fieldset>
+                <fieldset className="fieldset ">
+                  <legend className="fieldset-legend">Gender</legend>
+                  <input
+                    value={gender}
+                    type="text"
+                    className="input"
+                    placeholder="Enter your Gender"
+                    onChange={(e) => setGender(e.target.value)}
                   />
                 </fieldset>
               </>
@@ -146,12 +159,20 @@ const Login = () => {
           <p className="text-red ">{error}</p>
 
           <div className="card-actions justify-center">
-            <button className="btn btn-primary " onClick={ isLoginForm ? handleLogin : handleSignUp}>
-             {isLoginForm ? "Login" : "Sign up" }   </button>
+            <button
+              className="btn btn-primary "
+              onClick={isLoginForm ? handleLogin : handleSignUp}
+            >
+              {isLoginForm ? "Login" : "Sign up"}{" "}
+            </button>
           </div>
-          <p className="m-auto cursor-pointer py-2" onClick={()=> setIsLoginForm( (value) => !value)}
+          <p
+            className="m-auto cursor-pointer py-2"
+            onClick={() => setIsLoginForm((value) => !value)}
           >
-            {isLoginForm ? "New User? Sign Up Here" : "Existing User? Login Here "}
+            {isLoginForm
+              ? "New User? Sign Up Here"
+              : "Existing User? Login Here "}
           </p>
         </div>
       </div>
@@ -159,4 +180,4 @@ const Login = () => {
   );
 };
 
-export default Login;   
+export default Login;

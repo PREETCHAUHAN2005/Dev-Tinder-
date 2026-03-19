@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const { key } = require("../utils/constants");
 const jwt = require("jsonwebtoken");
 
+
 const userSchema = new mongoose.Schema(
   {
     firstname: {
@@ -41,7 +42,7 @@ const userSchema = new mongoose.Schema(
 
     gender: {
       type: String,
-      required: true,
+
       enum: ["male", "female", "others"],
       message: `{VALUE} is not supported`,
     },
@@ -51,11 +52,12 @@ const userSchema = new mongoose.Schema(
     //     if (!["male", "female", "others"].includes(value)) {
     //       throw new Error("Gender data is not valid");
     //     }
-    // },+
+    // },
 
     // },
     photoUrl: {
       type: String,
+      default: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
 
       validate(value) {
         if (!validator.isURL(value)) {
@@ -77,7 +79,7 @@ const userSchema = new mongoose.Schema(
 // User.find({ firstName: "Preet", lastName: "Chauhan" });
 userSchema.index({ firstname: 1, lastname: 1 });
 
-userSchema.methods.getJWT = async function() {
+userSchema.methods.getJWT = async function () {
   const user = this;
 
   const token = await jwt.sign({ _id: user._id }, key, { expiresIn: "7d" });

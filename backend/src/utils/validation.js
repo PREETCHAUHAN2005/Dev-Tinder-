@@ -8,11 +8,11 @@ const validateSignUpData = (req) => {
 
   if (!lastname || lastname.trim() === "") {
     throw new Error("Last name is required");
-    //   }else if(firstName.length<1 || firstName.length>20){
-    //     throw new Error ("First name must be between 1 and 20 characters"); // can ve handled by user.js
-  } else if (!validator.isEmail(email)) {
+  }
+  if (!validator.isEmail(email)) {
     throw new Error("Invalid email address: " + email);
-  } else if (!validator.isStrongPassword(password)) {
+  }
+  if (!validator.isStrongPassword(password)) {
     throw new Error("Please Enter a Strong Password  ");
   }
 };
@@ -21,10 +21,10 @@ const validateEditProfiledata = (req) => {
   const allowedEditFields = [
     "firstname",
     "lastname",
-    "email",
+
     "gender",
     "age",
-    "about",
+    "About",
     "skills",
     "photoUrl",
   ];

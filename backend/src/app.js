@@ -1,9 +1,8 @@
+ require("dotenv").config();
 const express = require("express");
 const connectDB = require("./config/database");
 const app = express();
-exports.app = app;
 const User = require("./models/user.js");
-require("dotenv").config();
 
 // const user = require("./models/user.js");
 
@@ -76,8 +75,8 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-app.patch("/user", async (req, res) => {
-  const userId = req.params?.userId;
+app.patch("/user/:userId", async (req, res) => {
+  const userId = req.params.userId;
   const data = req.body;
   try {
     const ALLOWED_UPDATES = [
@@ -94,24 +93,22 @@ app.patch("/user", async (req, res) => {
     );
     if (!isUpdateAllowed) {
       throw new Error("Update not Allowed");
-      if (data?.skills.length > 10) {
-        throw new Error("Skills cannot be more than 10");
-      }
     }
-  } catch (error) {
-    console.log("error");
-  }
+    if (data?.skills?.length > 10) {
+      throw new Error("Skills cannot be more than 10");
+    }
 
-  // try {
-  //   const user = await User.findByIdAndUpdate({ _id: userId }, data, {
-  //     returnDocument: "after",
-  //     runValidators: true,
-  //   });
-  //     console.log(user);
-  //     res.send("User updated successfully");
-  // } catch (error) {
-  //   res.status(400).send("Update Failed: " + error.message);
-  // }
+    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "after",
+      runValidators: true,
+    });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json({ message: "User updated successfully", data: user });
+  } catch (error) {
+    res.status(400).json({ error: "Update Failed: " + error.message });
+  }
 });
 
 connectDB()

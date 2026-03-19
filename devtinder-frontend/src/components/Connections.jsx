@@ -32,7 +32,7 @@ const Connections = () => {
       <div className="flex justify-center my-10">
         <h1 className="text-bold text-2xl">Connections</h1>
         {connections.map((connection) => {
-          const { firstname, lastname, photoUrl, gender, about } = connection;
+          const { firstname, lastname, photoUrl, gender, About } = connection;
 
           return (
             <div key={connection._id} className="m-4 p-4 flex rounded-lg bg-base-300 w-1/2 mx-auto">
@@ -41,7 +41,7 @@ const Connections = () => {
               </div>
               <div className="text-left mx-4">
                 <h2 className="font-bold text-xl">{firstname + " " + lastname}</h2>
-                <p>{about}</p>
+                <p>{About}</p>
               </div>
             </div>
           );

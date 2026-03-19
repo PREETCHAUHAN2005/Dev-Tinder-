@@ -4,7 +4,6 @@ import { Base_Url } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addRequests, removeRequests } from "../utils/requestSlice";
 
-
 const Requests = () => {
   const requests = useSelector((store) => store.requests);
   const dispatch = useDispatch();
@@ -15,10 +14,11 @@ const Requests = () => {
         Base_Url + "/request/review/" + status + "/" + _id,
         {},
         { withCredentials: true }
-
       );
       dispatch(removeRequests(_id));
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error reviewing request:", error);
+    }
   };
   const fetchRequests = async () => {
     try {
@@ -26,7 +26,9 @@ const Requests = () => {
         withCredentials: true,
       });
       dispatch(addRequests(res?.data?.data));
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+    }
   };
   useEffect(() => {
     fetchRequests();
@@ -39,7 +41,8 @@ const Requests = () => {
       <div className="flex justify-center my-10">
         <h1 className="text-bold text-2xl">Requests</h1>
         {requests.map((request) => {
-          const { _id, firstname, lastname, photoUrl, gender, about } = request;
+          const { _id, firstname, lastname, photoUrl, gender, About } =
+            request.fromUserId;
 
           return (
             <div
@@ -57,7 +60,7 @@ const Requests = () => {
                 <h2 className="font-bold text-xl">
                   {firstname + " " + lastname}
                 </h2>
-                <p>{about}</p>
+                <p>{About}</p>
               </div>
               <div>
                 <button
