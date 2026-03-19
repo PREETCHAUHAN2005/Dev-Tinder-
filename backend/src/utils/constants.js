@@ -1,4 +1,4 @@
-const key = "DEV$TINDER"
+const key = process.env.JWT_SECRET;
 module.exports = {
-    key,
-}
+  key,
+};

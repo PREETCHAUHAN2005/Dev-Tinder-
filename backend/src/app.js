@@ -3,6 +3,7 @@ const connectDB = require("./config/database");
 const app = express();
 exports.app = app;
 const User = require("./models/user.js");
+require("dotenv").config();
 
 // const user = require("./models/user.js");
 
@@ -116,7 +117,7 @@ app.patch("/user", async (req, res) => {
 connectDB()
   .then(() => {
     console.log("Database connected successfully");
-    app.listen(7777, () => {
+    app.listen(process.env.PORT, () => {
       console.log("Server is running on  port 7777...");
     });
   })

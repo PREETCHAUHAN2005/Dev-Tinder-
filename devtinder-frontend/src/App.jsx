@@ -21,10 +21,10 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/connections" element={<Connections />} />
-            </Route>
-            <Route path="/requests" element={<Requests />} />
+              <Route path="/requests" element={<Requests />} />
 
-            <Route path="/contact" element={<h1>Contact Page</h1>} />
+              <Route path="/contact" element={<h1>Contact Page</h1>} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </Provider>
