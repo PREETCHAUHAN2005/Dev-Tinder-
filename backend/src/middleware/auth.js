@@ -1,6 +1,6 @@
 const JWT = require("jsonwebtoken");
 const User = require("../models/user.js");
-const {key} = require("../utils/constants.js");
+const { key } = require("../utils/constants.js");
 
 const adminAuth = (req, res, next) => {
   const token = "xyz";
@@ -25,23 +25,22 @@ const adminAuth = (req, res, next) => {
 
 const userAuth = async (req, res, next) => {
   try {
-    const {token} = req.cookies;
-    if(!token){
-       return res.status(401).send("Please login to access this resource");
+    const { token } = req.cookies?.token;
+    if (!token) {
+      return res.status(401).send("Please login to access this resource");
     }
 
-    const decodedObj = await JWT.verify(token, key);
+    const decodedObj = JWT.verify(token, key);
     const { _id } = decodedObj;
 
     const user = await User.findById(_id);
     if (!user) {
       throw new Error("User does not exist");
     }
-    req.user=user;
+    req.user = user;
     next();
   } catch (err) {
-    res.status(400).send("ERROR: " + err.message);
-   
+    res.status(401).send("ERROR: Invalid or expired token." + err.message);
   }
 };
 module.exports = {

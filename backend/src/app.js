@@ -14,7 +14,9 @@ const authRouter = require("./routers/authroute.js");
 const profileRouter = require("./routers/authProfile.js");
 const reqRouter = require("./routers/requests.js");
 const userRouter = require("./routers/user.js");
+
 const cors = require("cors");
+const paymentRouter = require("./routers/payment.js");
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
@@ -24,6 +26,7 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", reqRouter);
 app.use("/", userRouter);
+app.use("/", paymentRouter);
 
 app.get("/user", async (req, res) => {
   // Expect email to be provided as a query parameter (e.g. /user?email=foo@bar.com)
@@ -69,7 +72,7 @@ app.delete("/user", async (req, res) => {
   const userId = req.body.userId;
   try {
     const user = await User.findByIdAndDelete(userId);
-    res.send("USEr  deleted successfully");
+    res.send("User  deleted successfully");
   } catch (error) {
     res.status(400).send("Error deleting user: " + error.message);
   }

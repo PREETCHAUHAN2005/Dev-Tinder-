@@ -6,10 +6,10 @@ const ConnectionRequestModel = require("../models/connectionRequest")
 cron.schedule("0 8 * * *", async () => {
   //   console.log("Hello YC ," + new Date());
   try {
-    yestarday = subDays(new Date(), 1);
+     const yesterday = subDays(new Date(), 1);
 
-    const yesterdayStart = startOfDay(yestarday);
-    const yesterdayEnd = endOfDay(yestarday);
+    const yesterdayStart = startOfDay(yesterday);
+    const yesterdayEnd = endOfDay(yesterday);
 
     const pendingRequests = await ConnectionRequestModel.find({
       status: "interested",
