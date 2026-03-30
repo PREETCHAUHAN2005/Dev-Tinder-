@@ -9,6 +9,31 @@ const Premium = () => {
       { type },
       { withCredentials: true }
     );
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: order.data.order.amount,
+      currency: order.data.order.currency,
+      name: "DevTinder",
+      description: "Membership Payment",
+      image: "/logo.png",
+      order_id: order.data.order.id,
+      handler: function (response) {
+        alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+      },
+      prefill: {
+        name: notes.firstName + " " + notes.lastName,
+        email: notes.emailId,
+        contact: notes.contact,
+      },
+      notes: {
+        address: "Razorpay Corporate Office",
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   };
   return (
     <div className="m-10">

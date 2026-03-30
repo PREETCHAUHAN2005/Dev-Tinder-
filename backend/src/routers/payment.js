@@ -18,7 +18,7 @@ paymentRouter.post("/payment/create", async (req, res) => {
         firstName,
         lastName,
         emailId,
-        membershipType: "Silver",
+        membershipType: membershipType,
       },
     });
     res.json({ order });
@@ -35,7 +35,7 @@ paymentRouter.post("/payment/create", async (req, res) => {
     console.log("Payment saved to DB:", savedPayment);
     res.json({
       message: "Payment created and saved successfully!",
-      ...savedPayment.toJSON(),
+      ...savedPayment.toJSON(), keyId : process.env.Razorpay_KEY_ID,
     });
   } catch (error) {
     return res
