@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const { key } = require("../utils/constants");
 const jwt = require("jsonwebtoken");
 
-
 const userSchema = new mongoose.Schema(
   {
     firstname: {
@@ -57,7 +56,7 @@ const userSchema = new mongoose.Schema(
     // },
     photoUrl: {
       type: String,
-      default: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+      default: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
 
       validate(value) {
         if (!validator.isURL(value)) {
@@ -73,6 +72,15 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: ["node.js", "react.js", "mongoDB"],
     },
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
+    membershipType: {
+      type: String,
+      enum: ["silver", "gold"],
+    },
+    
   },
   { timestamps: true }
 );

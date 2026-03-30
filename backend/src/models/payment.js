@@ -13,8 +13,11 @@ const paymentSchema = new mongoose.Schema(
     status: { type: String, required: true },
     amount: { type: Number, required: true },
     currency: { type: String, required: true },
-    firstname: { type: String, required: true },
-    lastname: { type: String },
+    notes: {
+      firstname: { type: String, required: true },
+      lastname: { type: String },
+      membershipType: { type: String },
+    },
   },
   { timestamps: true }
 );

@@ -5,6 +5,10 @@ const Payment = require("../models/payment.js");
 const razorpayInstance = require("../utils/razorpay.js");
 const { userAuth } = require("../middleware/auth.js");
 const membershipAmount = require("../utils/constants.js");
+const {
+  validateWebhookSignature,
+} = require("razorpay/dist/utils/razorpay-utils");
+const User = require("../models/user.js");
 
 paymentRouter.post("/payment/create", async (req, res) => {
   try {
@@ -21,6 +25,7 @@ paymentRouter.post("/payment/create", async (req, res) => {
         membershipType: membershipType,
       },
     });
+
     res.json({ order });
     console.log({ order });
     const payment = new Payment({
@@ -35,12 +40,52 @@ paymentRouter.post("/payment/create", async (req, res) => {
     console.log("Payment saved to DB:", savedPayment);
     res.json({
       message: "Payment created and saved successfully!",
-      ...savedPayment.toJSON(), keyId : process.env.Razorpay_KEY_ID,
+      ...savedPayment.toJSON(),
+      keyId: process.env.Razorpay_KEY_ID,
     });
   } catch (error) {
     return res
       .status(500)
       .json({ error: "Error creating payment: " + error.message });
+  }
+});
+paymentRouter.post("/payment/webhook", async (req, res) => {
+  try {
+    const webhookSignature = req.get["X-Razorpay-Signature"];
+    const WebhookSecret = process.env.Razorpay_WEBHOOK_SECRET;
+    const isWebhookvalid = validateWebhookSignature(
+      JSON.stringify(req.body),
+      webhookSignature,
+      WebhookSecret
+    );
+    if (!isWebhookvalid) {
+      return res.status(400).json({ msg: "Invalid webhook signature" });
+    }
+    // update payment status in DB based on the event type
+    const paymentDetails = req.body.payload.payment.entity;
+    const payment = await Payment.findOne({
+      orderId: paymentDetails.order_id,
+    });
+    payment.status = paymentDetails.status;
+    await payment.save();
+
+    const user = await User.findOne({ _id: payment.userId });
+    const membershipType = payment.notes.membershipType;
+
+    user.isPremium = true;
+
+    await user.save();
+
+    // if (req.body.event === "payment.captured") {
+    // }
+    // if (req.body.event === "payment.failed") {
+    // }
+
+    return res.status(200).json({ msg: "Webhook processed successfully" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Error processing webhook: " + error.message });
   }
 });
 
