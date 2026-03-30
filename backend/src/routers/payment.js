@@ -89,4 +89,17 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
   }
 });
 
+paymentRouter.get("/payment/history", userAuth, async (req, res) => {
+  const user = req.user;
+  if (user.isPremium) {
+    return res.json({
+      message: "You are a premium user, you have access to all the content!",
+    });
+  }
+  return res.json({
+    message:
+      "You are not a premium user, please subscribe to access all the content!",
+  });
+});
+
 module.exports = paymentRouter;

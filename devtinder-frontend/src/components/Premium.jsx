@@ -1,9 +1,24 @@
 import React from "react";
 import axios from "axios";
+import { useState } from "react";
 import { Base_Url } from "../utils/constants";
+import user from "../../../backend/src/models/user";
+import payment from "../../../backend/src/models/payment";
 
 const Premium = () => {
+  const [isUserPremium, setIsUserPremium] = useState(false);
+  const verifyPremiumUser = async () => {
+    const res = await axios.get(Base_Url + "/premium/verify", {
+      withCredentials: true,
+    });
+
+    if (res.data.isUserPremium) {
+      setIsUserPremium(true);
+    }
+  };
+
   const handleBuyClick = async (type) => {
+    const notes = payment.notes;
     const order = await axios.post(
       Base_Url + "/payment/create",
       { type },
@@ -17,9 +32,7 @@ const Premium = () => {
       description: "Membership Payment",
       image: "/logo.png",
       order_id: order.data.order.id,
-      handler: function (response) {
-        alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
-      },
+
       prefill: {
         name: notes.firstName + " " + notes.lastName,
         email: notes.emailId,
@@ -31,11 +44,14 @@ const Premium = () => {
       theme: {
         color: "#3399cc",
       },
+      handler: verifyPremiumUser,
     };
     const rzp = new window.Razorpay(options);
     rzp.open();
   };
-  return (
+  return isUserPremium ? (
+    "You are already a premium user"
+  ) : (
     <div className="m-10">
       <div className="flex w-full flex-col lg:flex-row">
         <div className="card bg-base-300 rounded-box grid h-70 grow place-items-center">
