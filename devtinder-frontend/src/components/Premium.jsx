@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
 import { Base_Url } from "../utils/constants";
@@ -7,18 +7,24 @@ import user from "../../../backend/src/models/user";
 
 const Premium = () => {
   const [isUserPremium, setIsUserPremium] = useState(false);
+  
+  useEffect(() => {
+    verifyPremiumUser();
+  },[]);
+
   const verifyPremiumUser = async () => {
     const res = await axios.get(Base_Url + "/premium/verify", {
       withCredentials: true,
     });
 
+
+  
     if (res.data.isUserPremium) {
       setIsUserPremium(true);
     }
   };
 
   const handleBuyClick = async (type) => {
-    
     const order = await axios.post(
       Base_Url + "/payment/create",
       { type },
