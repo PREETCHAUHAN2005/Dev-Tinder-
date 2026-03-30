@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Base_Url } from "../utils/constants";
 import user from "../../../backend/src/models/user";
-import payment from "../../../backend/src/models/payment";
+// import payment from "../../../backend/src/models/payment";
 
 const Premium = () => {
   const [isUserPremium, setIsUserPremium] = useState(false);
@@ -18,7 +18,7 @@ const Premium = () => {
   };
 
   const handleBuyClick = async (type) => {
-    const notes = payment.notes;
+    
     const order = await axios.post(
       Base_Url + "/payment/create",
       { type },
@@ -33,11 +33,11 @@ const Premium = () => {
       image: "/logo.png",
       order_id: order.data.order.id,
 
-      prefill: {
-        name: notes.firstName + " " + notes.lastName,
-        email: notes.emailId,
-        contact: notes.contact,
-      },
+      // prefill: {
+      //   name: notes.firstName + " " + notes.lastName,
+      //   email: notes.emailId,
+      //   contact: notes.contact,
+      // },
       notes: {
         address: "Razorpay Corporate Office",
       },
