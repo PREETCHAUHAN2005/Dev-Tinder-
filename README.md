@@ -229,17 +229,7 @@ This project is licensed under the **MIT License** — feel free to use, modify,
 
 <div align="center">
 
-**Made with ❤️ by a developer, for developers.**
 
-*If DevTinder helped you in any way, drop a ⭐ on the repo — it means the world!*
-
-
-
-</div>
-
-# OVERVIEW OF PROJECT IDEA
-This project is made to gain the knowledge of React Components and it is the tinder for developer where they can connect and share their thoughts.
-Here developers can mae new friends and also senior developer can guide their juniors about their carrer.
 
 # TARGET
 TO CREATE A PLATFORM WHICH HELPS ME IN GAINING KNOWLEDGE OF BACKEND 
@@ -250,4 +240,12 @@ It should also enhance my backend code knowledge.
 2.Mainly focused on connecting developers so it acts as the platform for the developers to connect wth their fellow developers and share their experience and learnings.
 It saves time for busy develpers.
 3.Support junior developers to make connection with senior developer.
+
+**Made with ❤️ by a developer, for developers.**
+
+*If DevTinder helped you in any way, drop a ⭐ on the repo — it means the world!*
+
+
+</div>
+
 
