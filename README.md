@@ -23,7 +23,7 @@
 
 ---
 
-## 🌟 What is DevTinder?
+##  What is DevTinder?
 
 **DevTinder** is a developer-first social networking platform that brings the magic of matchmaking to the tech world. Whether you're a junior developer looking for a mentor, a senior engineer wanting to give back, or just someone looking for a like-minded coding buddy — DevTinder is your place.
 
@@ -31,7 +31,7 @@ No more cold LinkedIn messages. No more awkward cold emails. Just **swipe, match
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 | Feature | Description |
 |---|---|
@@ -51,14 +51,14 @@ No more cold LinkedIn messages. No more awkward cold emails. Just **swipe, match
  All they needed was the right connection."
 ```
 
-- 🚀 **For Junior Devs** — Find experienced mentors who've walked the path before you
-- 🧑‍🏫 **For Senior Devs** — Give back to the community; shape the next generation
-- ⚡ **For All Devs** — Build your network without the noise of generic social platforms
-- 🕒 **Saves Time** — Built for busy developers who want meaningful connections fast
+-   **For Junior Devs** — Find experienced mentors who've walked the path before you
+-   **For Senior Devs** — Give back to the community; shape the next generation
+-   **For All Devs** — Build your network without the noise of generic social platforms
+-   **Saves Time** — Built for busy developers who want meaningful connections fast
 
 ---
 
-## 🏗️ Tech Stack
+##  Tech Stack
 
 ### 🔙 Backend
 ```
