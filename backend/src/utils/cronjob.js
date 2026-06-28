@@ -1,5 +1,5 @@
 const cron = require("node-cron");
-const { subDays, startOfDay, endOfDay } = require("data-fns");
+const { subDays, startOfDay, endOfDay } = require("date-fns");
 const sendEmail = require("./sendEmail");
 const ConnectionRequestModel = require("../models/connectionRequest")
 // const ConnectionRequest = require("../models/connectionRequest");
@@ -20,7 +20,7 @@ cron.schedule("0 8 * * *", async () => {
     }).populate("fromUserId toUserId");
 
     const listOfEmails = new Set(
-      pendingRequests.map((req) => req.toUserId.emailId)
+      pendingRequests.map((req) => req.toUserId?.email).filter(Boolean)
     );
     for (const email of listOfEmails) {
       const res = await sendEmail.run(

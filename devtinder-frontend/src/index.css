@@ -1,2 +1,120 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+:root {
+  font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #09090B;
+}
+
+/* Micro1.ai Design System Variables & Classes */
+.bg-obsidian {
+  background-color: #09090B;
+}
+
+.bg-micro1-blue {
+  background-color: #3444DA;
+}
+
+.border-micro1 {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+/* Micro1 Glow System (Royal Blue Glow & Amber Backdrop Glow) */
+.bg-glow-amber {
+  background: radial-gradient(circle, rgba(217, 119, 6, 0.08) 0%, rgba(217, 119, 6, 0) 70%);
+}
+
+.bg-glow-blue {
+  background: radial-gradient(circle, rgba(52, 68, 218, 0.08) 0%, rgba(52, 68, 218, 0) 70%);
+}
+
+.shadow-micro1-glow {
+  box-shadow: 0 0 25px rgba(52, 68, 218, 0.12);
+}
+
+.shadow-micro1-active {
+  box-shadow: 0 0 35px rgba(52, 68, 218, 0.25);
+}
+
+/* Micro1 Glass Panel Card styling */
+.micro1-card {
+  background: rgba(18, 18, 20, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.micro1-card-active {
+  background: rgba(18, 18, 20, 0.95);
+  border: 1px solid rgba(52, 68, 218, 0.35);
+}
+
+/* Text Highlights */
+.text-micro1-gradient {
+  background: linear-gradient(135deg, #FFFFFF 0%, #D1D5DB 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #09090B;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(52, 68, 218, 0.25);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(52, 68, 218, 0.45);
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(52, 68, 218, 0.08);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(52, 68, 218, 0.2);
+  }
+}
+
+.animate-pulse-blue {
+  animation: pulseGlow 3s infinite ease-in-out;
+}
+
+/* Sonar radar scanning effect (Micro1 Blue variant) */
+@keyframes radarWave {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.radar-wave {
+  position: absolute;
+  border: 2px solid rgba(52, 68, 218, 0.3);
+  border-radius: 50%;
+  animation: radarWave 2s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
+}
+
+.radar-wave-delayed {
+  position: absolute;
+  border: 2px solid rgba(52, 68, 218, 0.15);
+  border-radius: 50%;
+  animation: radarWave 2s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
+  animation-delay: 0.8s;
+}
+
+/* Card gradient cover overlay */
+.card-gradient-overlay {
+  background: linear-gradient(to top, rgba(9, 9, 11, 0.98) 0%, rgba(9, 9, 11, 0.7) 40%, rgba(9, 9, 11, 0) 100%);
+}

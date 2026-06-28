@@ -9,7 +9,6 @@ const User = require("../models/user.js");
 reqRouter.post(
   "/request/send/:status/:toUserId",
   userAuth,
-
   async (req, res, next) => {
     try {
       const fromUserId = req.user._id;
@@ -23,8 +22,7 @@ reqRouter.post(
           .json({ message: "invalid status type :" + status });
       }
 
-      //  Validating user by ID
-
+      // Validating user by ID
       const toUser = await User.findById(toUserId);
       if (!toUser) {
         return res.status(404).json({ message: " User not Found" });
@@ -32,18 +30,39 @@ reqRouter.post(
 
       const existingConnectionRequest = await ConnectionRequest.findOne({
         $or: [
-          {
-            fromUserId,
-            toUserId,
-          },
+          { fromUserId, toUserId },
           { fromUserId: toUserId, toUserId: fromUserId },
         ],
       });
+
       if (existingConnectionRequest) {
+        // If the request was sent by the other user (toUserId) to the current user (fromUserId)
+        if (existingConnectionRequest.toUserId.toString() === fromUserId.toString()) {
+          // Other user was interested, current user likes back -> MATCH ACCEPTED
+          if (existingConnectionRequest.status === "interested" && status === "interested") {
+            existingConnectionRequest.status = "accepted";
+            const data = await existingConnectionRequest.save();
+            return res.json({
+              message: `It's a Match! You and ${toUser.firstname} connected!`,
+              data,
+            });
+          }
+          // Other user was interested, current user ignores -> DECLINE REQUEST
+          if (existingConnectionRequest.status === "interested" && status === "ignored") {
+            existingConnectionRequest.status = "rejected";
+            const data = await existingConnectionRequest.save();
+            return res.json({
+              message: `Declined connection request from ${toUser.firstname}`,
+              data,
+            });
+          }
+        }
+
         return res
           .status(400)
-          .send({ message: " Connection Request already Exists" });
+          .json({ message: "Connection Request already Exists" });
       }
+
       const connectionRequest = new ConnectionRequest({
         fromUserId,
         toUserId,

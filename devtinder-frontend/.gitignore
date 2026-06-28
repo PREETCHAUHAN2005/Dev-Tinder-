@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Confidential Environment configs
+.env
+.env.local
+.env.*.local

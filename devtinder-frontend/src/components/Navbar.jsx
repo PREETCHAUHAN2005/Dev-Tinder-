@@ -21,37 +21,26 @@ const Navbar = () => {
   };
 
   return (
-    // 1. Added px-6 for side padding and shadow-lg for depth
-    <div className="navbar bg-base-300 shadow-lg px-4 sm:px-6">
+    <div className="navbar sticky top-0 z-50 bg-[#09090B]/85 backdrop-blur-md border-b border-slate-800/40 px-6 py-3 transition-all duration-300 mb-6">
       {/* Brand Logo */}
       <div className="flex-1">
         <Link
           to="/"
-          className="btn btn-ghost text-xl sm:text-2xl font-bold text-primary"
+          className="flex items-center gap-1 hover:opacity-85 transition-opacity"
         >
-          DevTinder
+          <span className="text-xl font-bold tracking-tight text-white font-Outfit lowercase">
+            devtinder<span className="text-[#3444DA] font-extrabold font-Outfit text-2xl">.</span>
+          </span>
         </Link>
       </div>
 
       {/* Right Side Section */}
       <div className="flex gap-4 items-center">
-        {" "}
-        {/* 2. items-center aligns everything vertically */}
-        {/* Search - Hidden on very small screens to save space */}
         {user && (
-          <div className="form-control hidden sm:block">
-            <input
-              type="text"
-              placeholder="Search"
-              className="input input-bordered w-24 md:w-auto h-10"
-            />
-          </div>
-        )}
-        {user && (
-          <div className="flex items-center gap-3">
-            {/* Welcome Text - Now separate from dropdown for better alignment */}
-            <span className="text-base font-medium hidden md:block">
-              Welcome, {user.firstname}
+          <div className="flex items-center gap-5">
+            {/* Welcome Text */}
+            <span className="text-xs font-semibold text-slate-400 tracking-wide uppercase hidden md:block">
+              Welcome, <span className="text-slate-100 font-bold">{user.firstname}</span>
             </span>
 
             {/* Avatar Dropdown */}
@@ -59,34 +48,47 @@ const Navbar = () => {
               <div
                 tabIndex={0}
                 role="button"
-                className="btn btn-ghost btn-circle avatar border border-primary/20"
+                className="btn btn-ghost btn-circle avatar border border-slate-800 hover:border-[#3444DA] p-[2px] transition-all duration-300 shadow-lg"
               >
-                <div className="w-10 rounded-full">
-                  <img alt="user profile" src={user.photoUrl} />
+                <div className="w-8 rounded-full overflow-hidden">
+                  <img
+                    alt="user profile"
+                    src={user.photoUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
 
               <ul
                 tabIndex={0}
-                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-lg border border-base-200"
+                className="menu menu-sm dropdown-content mt-3 w-52 p-2 shadow-2xl rounded-xl border border-slate-800/70 bg-[#121214] z-[1]"
               >
                 <li>
-                  <Link to="/profile" className="justify-between">
-                    Profile
-                    <span className="badge badge-accent">New</span>
+                  <Link to="/profile" className="flex justify-between items-center py-2.5 px-3 hover:bg-slate-800/60 rounded-lg text-slate-300">
+                    <span>Profile Settings</span>
+                    <span className="badge badge-sm bg-[#3444DA] text-white border-none text-[9px] uppercase tracking-wider px-1.5 py-0.5">Edit</span>
                   </Link>
                 </li>
                 <li>
-                  <Link to="/connections">Connections</Link>
+                  <Link to="/connections" className="py-2.5 px-3 hover:bg-slate-800/60 rounded-lg text-slate-300">
+                    My Connections
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/requests">Requests</Link>
+                  <Link to="/requests" className="py-2.5 px-3 hover:bg-slate-800/60 rounded-lg text-slate-300">
+                    Requests
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/premium">Premium</Link>
+                  <Link to="/premium" className="py-2.5 px-3 hover:bg-slate-800/60 rounded-lg text-amber-500 font-semibold flex items-center gap-1">
+                    👑 Premium
+                  </Link>
                 </li>
+                <div className="divider my-1 border-slate-800/50"></div>
                 <li>
-                  <a onClick={handleLogout}>Logout</a>
+                  <a onClick={handleLogout} className="py-2.5 px-3 hover:bg-rose-500/10 text-rose-400 hover:text-rose-300 rounded-lg">
+                    Logout
+                  </a>
                 </li>
               </ul>
             </div>
@@ -98,3 +100,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
