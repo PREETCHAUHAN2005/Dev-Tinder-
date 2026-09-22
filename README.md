@@ -136,11 +136,12 @@ cd backend
 npm install
 ```
 
-Create a `.env` file in the `backend` directory:
+Create a `.env` file in the `backend` directory (see `backend/.env.example`):
 ```env
-PORT=3000
-MONGO_URI=your_mongodb_connection_string
+PORT=7777
+DATABASE_SECRET_KEY=your_mongodb_connection_string
 JWT_SECRET=your_super_secret_key
+CLIENT_ORIGIN=http://localhost:5173
 ```
 
 Start the backend server in development mode:
@@ -150,7 +151,7 @@ npm run dev
 
 **3. Configure the Frontend**
 ```bash
-cd ../frontend
+cd ../devtinder-frontend
 npm install
 npm run dev
 ```

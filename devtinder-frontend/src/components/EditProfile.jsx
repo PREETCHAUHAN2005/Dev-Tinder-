@@ -69,6 +69,11 @@ const EditProfile = ({ user }) => {
         <p className="text-[#94A3B8] mt-2 text-sm">
           Customize how other developers see your card in the matchmaking feed.
         </p>
+        {user.isPremium && (
+          <p className="mt-3 text-xs font-bold uppercase tracking-wider text-amber-300">
+            {user.membershipType || "premium"} member
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col lg:flex-row gap-10 justify-center items-start">
@@ -202,6 +207,7 @@ const EditProfile = ({ user }) => {
             <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500">Live Card Preview</span>
           </div>
           <UserCard
+            preview
             user={{
               firstname,
               lastname,

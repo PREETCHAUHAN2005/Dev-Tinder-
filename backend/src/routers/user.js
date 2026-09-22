@@ -5,7 +5,7 @@ const { userAuth } = require("../middleware/auth.js");
 const User  = require("../models/user.js");
 const bcrypt = require("bcrypt");
 const ConnectionRequests = require("../models/connectionRequest.js");
-const User_Safe_Data = "firstname lastname email photoUrl age gender About ";
+const User_Safe_Data = "firstname lastname email photoUrl age gender About skills";
 
 userRouter.get("/user/request/received", userAuth, async (req, res) => {
   try {
@@ -69,12 +69,18 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
 
     const connectionRequest = await ConnectionRequests.find({
       $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
-    }).select("fromUserId toUserId");
+    }).select("fromUserId toUserId status");
 
+    const me = loggedInUser._id.toString();
     const hidenUsersFromFeed = new Set();
-    connectionRequest.forEach((req) => {
-      hidenUsersFromFeed.add(req.fromUserId.toString());
-      hidenUsersFromFeed.add(req.toUserId.toString());
+    connectionRequest.forEach((row) => {
+      const from = row.fromUserId.toString();
+      const to = row.toUserId.toString();
+      const incomingPending = to === me && row.status === "interested";
+      if (incomingPending) {
+        return;
+      }
+      hidenUsersFromFeed.add(from === me ? to : from);
     });
     // console.log("hidenUsersFromFeed", hidenUsersFromFeed);
 

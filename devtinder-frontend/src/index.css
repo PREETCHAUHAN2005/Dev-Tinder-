@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+@theme {
+  --font-Outfit: "Outfit", "Inter", sans-serif;
+  --spacing-13: 3.25rem;
+  --color-slate-850: #151821;
+  --color-slate-750: #2a3142;
+  --color-amber-350: #fbbf24;
+}
+
 :root {
   font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
   background-color: #09090B;
@@ -117,4 +125,34 @@
 /* Card gradient cover overlay */
 .card-gradient-overlay {
   background: linear-gradient(to top, rgba(9, 9, 11, 0.98) 0%, rgba(9, 9, 11, 0.7) 40%, rgba(9, 9, 11, 0) 100%);
+}
+
+.bg-tinder-gradient {
+  background-image: linear-gradient(135deg, #8ea0ff 0%, #3444da 48%, #9aa8ff 100%);
+}
+
+.glass-panel {
+  background: rgba(18, 18, 20, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.font-Outfit {
+  font-family: "Outfit", "Inter", system-ui, sans-serif;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s ease;
 }

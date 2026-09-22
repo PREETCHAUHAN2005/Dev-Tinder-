@@ -1,24 +1,31 @@
- require("dotenv").config();
+require("dotenv").config();
+const http = require("http");
 const express = require("express");
 const connectDB = require("./config/database");
-const app = express();
-const User = require("./models/user.js");
-
-// const user = require("./models/user.js");
-
 const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
-const { key } = require("./utils/constants.js");
+const cors = require("cors");
 
 const authRouter = require("./routers/authroute.js");
 const profileRouter = require("./routers/authProfile.js");
 const reqRouter = require("./routers/requests.js");
 const userRouter = require("./routers/user.js");
-
-const cors = require("cors");
 const paymentRouter = require("./routers/payment.js");
+const { handleWebhook } = require("./routers/payment.js");
+const chatRouter = require("./routers/chat.js");
+const { initSocket } = require("./utils/socket.js");
+const User = require("./models/user.js");
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+const app = express();
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+    credentials: true,
+  })
+);
+
+app.post("/payment/webhook", express.raw({ type: () => true }), handleWebhook);
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -27,98 +34,21 @@ app.use("/", profileRouter);
 app.use("/", reqRouter);
 app.use("/", userRouter);
 app.use("/", paymentRouter);
-
-app.get("/user", async (req, res) => {
-  // Expect email to be provided as a query parameter (e.g. /user?email=foo@bar.com)
-  const userEmail = req.query.email || req.body.email;
-
-  if (!userEmail) {
-    return res
-      .status(400)
-      .json({ error: "Please provide ?email=<email> as query parameter" });
-  }
-
-  try {
-    const users = await User.findOne({ email: userEmail }).exec();
-    if (!users) {
-      return res.status(404).json({ error: "user not found" });
-    }
-    return res.status(200).json(users);
-  } catch (error) {
-    // Log the full error on the server so we can see stack traces in logs
-    console.error("Error in GET /user:", error);
-    return res
-      .status(500)
-      .json({ error: "Error fetching user: " + error.message });
-  }
-});
-
-app.get("/feed", async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (error) {
-    // Log the full error on the server so we can see stack traces in logs
-    console.error("Error in GET /feed:", error);
-    return res
-      .status(500)
-      .json({ error: "Error fetching feed: " + error.message });
-  }
-});
-
-// Health check endpoint
-
-app.delete("/user", async (req, res) => {
-  const userId = req.body.userId;
-  try {
-    const user = await User.findByIdAndDelete(userId);
-    res.send("User  deleted successfully");
-  } catch (error) {
-    res.status(400).send("Error deleting user: " + error.message);
-  }
-});
-
-app.patch("/user/:userId", async (req, res) => {
-  const userId = req.params.userId;
-  const data = req.body;
-  try {
-    const ALLOWED_UPDATES = [
-      "firstname",
-      "lastname",
-      "email",
-      "password",
-      "gender",
-      "age",
-      "skills",
-    ];
-    const isUpdateAllowed = Object.keys(data).every((k) =>
-      ALLOWED_UPDATES.includes(k)
-    );
-    if (!isUpdateAllowed) {
-      throw new Error("Update not Allowed");
-    }
-    if (data?.skills?.length > 10) {
-      throw new Error("Skills cannot be more than 10");
-    }
-
-    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
-      returnDocument: "after",
-      runValidators: true,
-    });
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    res.json({ message: "User updated successfully", data: user });
-  } catch (error) {
-    res.status(400).json({ error: "Update Failed: " + error.message });
-  }
-});
+app.use("/", chatRouter);
 
 connectDB()
-  .then(() => {
+  .then(async () => {
     console.log("Database connected successfully");
-    app.listen(process.env.PORT, () => {
-      console.log("Server is running on  port 7777...");
+    const indexes = await User.collection.indexes();
+    const firstNameIndex = indexes.find((index) => index.name === "firstname_1");
+    if (firstNameIndex?.unique) {
+      await User.collection.dropIndex("firstname_1");
+    }
+    const port = process.env.PORT || 7777;
+    const server = http.createServer(app);
+    initSocket(server);
+    server.listen(port, () => {
+      console.log(`Server is running on port ${port}...`);
     });
   })
   .catch((err) => {
