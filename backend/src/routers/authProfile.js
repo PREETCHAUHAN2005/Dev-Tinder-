@@ -37,8 +37,16 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
     }
 
     const loggedInUser = req.user;
+    const defaultPhoto = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
     Object.keys(req.body).forEach((field) => {
+      if (field === "gender" && !req.body.gender) {
+        return;
+      }
+      if (field === "photoUrl" && !String(req.body.photoUrl || "").trim()) {
+        loggedInUser.photoUrl = defaultPhoto;
+        return;
+      }
       loggedInUser[field] = req.body[field];
     });
 
@@ -46,9 +54,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
     res.json({
       message: `${loggedInUser.firstname},You succesfully updated your profile`,
       data: loggedInUser,
-    });
-    // Remove after check
-    console.log("Logged in user:", loggedInUser); 
+    }); 
   } catch (err) {
     res.status(400).send("Error: " + err.message);
   }

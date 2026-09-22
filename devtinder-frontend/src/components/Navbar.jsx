@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Base_Url } from "../utils/constants";
 import axios from "axios";
 import { removeUser } from "../utils/userSlice";
+import { clearFeed } from "../utils/feedSlice";
+import { removeConnection } from "../utils/connectionSlice";
+import { clearRequests } from "../utils/requestSlice";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
@@ -14,6 +17,9 @@ const Navbar = () => {
     try {
       await axios.post(Base_Url + "/logout", {}, { withCredentials: true });
       dispatch(removeUser());
+      dispatch(clearFeed());
+      dispatch(removeConnection());
+      dispatch(clearRequests());
       return navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -42,6 +48,18 @@ const Navbar = () => {
             <span className="text-xs font-semibold text-slate-400 tracking-wide uppercase hidden md:block">
               Welcome, <span className="text-slate-100 font-bold">{user.firstname}</span>
             </span>
+            {user.isPremium ? (
+              <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-amber-400/15 text-amber-300 border border-amber-400/30">
+                {user.membershipType || "premium"}
+              </span>
+            ) : (
+              <Link
+                to="/premium"
+                className="hidden sm:inline text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border border-slate-700 text-slate-300 hover:border-[#3444DA] hover:text-white"
+              >
+                Upgrade
+              </Link>
+            )}
 
             {/* Avatar Dropdown */}
             <div className="dropdown dropdown-end">
@@ -75,13 +93,18 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li>
+                  <Link to="/chat" className="py-2.5 px-3 hover:bg-slate-800/60 rounded-lg text-slate-300">
+                    Chat
+                  </Link>
+                </li>
+                <li>
                   <Link to="/requests" className="py-2.5 px-3 hover:bg-slate-800/60 rounded-lg text-slate-300">
                     Requests
                   </Link>
                 </li>
                 <li>
                   <Link to="/premium" className="py-2.5 px-3 hover:bg-slate-800/60 rounded-lg text-amber-500 font-semibold flex items-center gap-1">
-                    👑 Premium
+                    {user.isPremium ? `${user.membershipType || "Premium"} plan` : "Upgrade"}
                   </Link>
                 </li>
                 <div className="divider my-1 border-slate-800/50"></div>

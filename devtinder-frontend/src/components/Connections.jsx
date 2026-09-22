@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Base_Url } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { addConnection } from "../utils/connectionSlice";
 
 const Connections = () => {
@@ -124,9 +125,12 @@ const Connections = () => {
                   >
                     Email Dev
                   </a>
-                  <button className="px-4 py-2 rounded-full bg-[#1d1d22] hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition-all text-xs">
-                    💬 Chat
-                  </button>
+                  <Link
+                    to={`/chat/${_id}`}
+                    className="px-4 py-2 rounded-full bg-[#1d1d22] hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition-all text-xs"
+                  >
+                    Chat
+                  </Link>
                 </div>
               </div>
             );

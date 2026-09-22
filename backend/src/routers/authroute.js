@@ -13,6 +13,17 @@ const User = require("../models/user");
 // const app = express();
 
 const authRouter = express.Router();
+const AUTH_COOKIE_MS = 7 * 24 * 60 * 60 * 1000;
+
+function authCookie(expires) {
+  return {
+    httpOnly: true,
+    expires,
+    sameSite: "none",
+    secure: true,
+    path: "/",
+  };
+}
 
 authRouter.post("/signup", async (req, res) => {
   const { firstname, lastname, email, password, gender} = req.body;
@@ -35,10 +46,7 @@ authRouter.post("/signup", async (req, res) => {
     });
     const savedUser = await user.save(); // Saving the user instance to the database
     const token = await savedUser.getJWT();
-    res.cookie("token", token, {
-      expires: new Date(Date.now() + 8 * 3600000),
-      httpOnly: true,
-    });
+    res.cookie("token", token, authCookie(new Date(Date.now() + AUTH_COOKIE_MS)));
     res.json({message : "User Saved Successfull!", user: savedUser});
 
   } catch (error) {
@@ -62,10 +70,7 @@ authRouter.post("/login", async (req, res) => {
       const token = await user.getJWT();
       // console.log(token);
       // Add the cookie to the server and send the response back to the server
-      res.cookie("token", token, {
-        expires: new Date(Date.now() + 8 * 3600000),
-        httpOnly: true,
-      });
+      res.cookie("token", token, authCookie(new Date(Date.now() + AUTH_COOKIE_MS)));
 
       // {
 
@@ -81,10 +86,7 @@ authRouter.post("/login", async (req, res) => {
 
 authRouter.post("/logout", async (req, res) => {
   res
-    .cookie("token", null, {
-      httpOnly: true,
-      expires: new Date(Date.now()),
-    })
+    .cookie("token", "", authCookie(new Date(0)))
     .send("Logout Succesfull");
 });
 

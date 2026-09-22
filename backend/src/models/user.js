@@ -87,6 +87,13 @@ const userSchema = new mongoose.Schema(
 // User.find({ firstName: "Preet", lastName: "Chauhan" });
 userSchema.index({ firstname: 1, lastname: 1 });
 
+userSchema.set("toJSON", {
+  transform(_doc, ret) {
+    delete ret.password;
+    return ret;
+  },
+});
+
 userSchema.methods.getJWT = async function () {
   const user = this;
 
