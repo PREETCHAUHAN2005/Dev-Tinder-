@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
-import { Base_Url } from "../utils/constants";
+import { Base_Url, Socket_Url } from "../utils/constants";
 
 const Chat = () => {
   const { userId } = useParams();
@@ -59,7 +59,7 @@ const Chat = () => {
 
   useEffect(() => {
     if (!userId) return undefined;
-    const socket = io(Base_Url, { withCredentials: true });
+    const socket = io(Socket_Url, { withCredentials: true });
     socketRef.current = socket;
     socket.emit("chat:join", { userId });
     socket.on("chat:message", (message) => {

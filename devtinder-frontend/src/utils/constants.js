@@ -1,2 +1,5 @@
-export const Base_Url = "http://localhost:7777";
-//  change /api to http://localhost:7777 if code on aws not work
+export const Base_Url =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? "/api" : "http://localhost:7777");
+
+export const Socket_Url = import.meta.env.PROD ? undefined : Base_Url;

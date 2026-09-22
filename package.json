@@ -1,0 +1,10 @@
+{
+  "name": "devtinder-vercel",
+  "private": true,
+  "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix devtinder-frontend && npm run build --prefix devtinder-frontend"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
