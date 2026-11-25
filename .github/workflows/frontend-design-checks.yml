@@ -1,0 +1,47 @@
+name: Frontend design checks
+on:
+  push:
+    branches:
+      - codex/devtinder-frontend-design
+  pull_request:
+    paths:
+      - 'devtinder-frontend/**'
+      - '.github/workflows/frontend-design-checks.yml'
+permissions:
+  contents: read
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: devtinder-frontend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: devtinder-frontend/package-lock.json
+      - run: npm ci
+      - name: Production build
+        run: npm run build
+      - name: Verify existing application contracts
+        if: github.head_ref == 'codex/devtinder-frontend-design' || github.ref_name == 'codex/devtinder-frontend-design'
+        run: node scripts/check-contracts.mjs origin/main
+      - name: Compare lint with the existing code
+        run: node scripts/check-lint.mjs origin/main
+      - name: Install browser test tooling without changing dependencies
+        run: npm install --no-save --package-lock=false @playwright/test@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile interaction checks
+        run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-design-verification
+          path: |
+            devtinder-frontend/test-results/
+            devtinder-frontend/playwright-report/

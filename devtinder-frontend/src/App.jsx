@@ -1,6 +1,5 @@
 import Body from "./components/Body";
 import Login from "./components/Login";
-import Navbar from "./components/Navbar";
 // import { Router } from "express"
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Profile from "./components/Profile";
@@ -28,7 +27,7 @@ function App() {
               <Route path="/chat" element={<Chat />} />
               <Route path="/chat/:userId" element={<Chat />} />
 
-              <Route path="/contact" element={<h1>Contact Page</h1>} />
+              <Route path="/contact" element={<section className="dt-page"><div className="dt-panel dt-contact-panel"><p className="dt-eyebrow">DEVTINDER</p><h1>Contact</h1><p>Contact information will appear here when available.</p></div></section>} />
             </Route>
           </Routes>
         </BrowserRouter>

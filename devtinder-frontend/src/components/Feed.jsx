@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
+import PageHeading from "./ui/PageHeading";
+import StatePanel from "./ui/StatePanel";
+import MatchDialog from "./ui/MatchDialog";
+import Icon from "./ui/Icon";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Base_Url } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addfeed } from "../utils/feedSlice";
-import { Link } from "react-router-dom";
 import UserCard from "./UserCard";
 
 const Feed = () => {
@@ -36,124 +39,52 @@ const Feed = () => {
     }
   }, []);
 
+  let content;
   if (loading || (!feed && !error)) {
-    return (
-      <div className="flex flex-col justify-center items-center min-h-[60vh]">
-        <div className="relative w-40 h-40 flex items-center justify-center mb-8">
-          <div className="radar-wave"></div>
-          <div className="radar-wave-delayed"></div>
-          <div className="w-16 h-16 rounded-full border border-[#3444DA]/50 p-0.5 z-10 shadow-lg bg-[#16161a]">
-            <img
-              src={currentUser?.photoUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
-              className="w-full h-full rounded-full object-cover animate-pulse"
-              alt="Searching avatar"
-            />
+    content = <StatePanel loading title="Finding your next connection" description="Loading developer profiles." icon="discover" />;
+  } else if (error && !feed) {
+    content = <StatePanel error title="Couldn't load developers" description={error} icon="alert">
+      <button type="button" className="dt-button dt-button-primary" onClick={getFeed}><Icon name="refresh" />Try again</button>
+    </StatePanel>;
+  } else if (feed.length === 0) {
+    content = <StatePanel title="You're all caught up" description="You've seen the available profiles. Check back later to meet more developers." icon="people">
+      <button type="button" className="dt-button dt-button-primary" onClick={getFeed}><Icon name="refresh" />Refresh feed</button>
+    </StatePanel>;
+  } else {
+    const top = feed[0];
+    content = (
+      <div className="dt-discovery-layout">
+        <div className="dt-discovery-stage">
+          <div className="dt-card-stack">
+            {feed[1] && <div className="dt-card-behind" aria-hidden="true"><UserCard user={feed[1]} preview /></div>}
+            <div className="dt-card-front"><UserCard key={top._id} user={top} onDecision={(data) => {
+              if (typeof data?.message === "string" && data.message.includes("It's a Match")) setMatch(top);
+            }} /></div>
           </div>
+          <p className="dt-gesture-hint"><span>← Pass</span><span>Drag a card or use the buttons</span><span>Like →</span></p>
         </div>
-        <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider animate-pulse">
-          Locating nearby developers...
-        </p>
+        <aside className="dt-discovery-note">
+          <span className="dt-note-icon"><Icon name="code" /></span>
+          <p className="dt-eyebrow">GREAT THINGS START HERE</p>
+          <h2>A shared stack.<br />A fresh perspective.</h2>
+          <p>Meet the people behind the code. Find a new collaborator, exchange ideas, or simply say hello.</p>
+          <div className="dt-note-rule" />
+          <div className="dt-note-step"><Icon name="discover" /><div><strong>Discover your people</strong><p>Get to know their interests and skills.</p></div></div>
+          <div className="dt-note-step"><Icon name="heart" /><div><strong>Make a connection</strong><p>Like a profile. When it's mutual, you're connected.</p></div></div>
+          <div className="dt-note-step"><Icon name="message" /><div><strong>Start a conversation</strong><p>A simple hello can be the first commit.</p></div></div>
+        </aside>
       </div>
     );
   }
-
-  if (error && !feed) {
-    return (
-      <div className="flex flex-col justify-center items-center min-h-[60vh] text-center px-6">
-        <h2 className="text-xl font-bold text-white font-Outfit">Feed unavailable</h2>
-        <p className="text-[#94A3B8] mt-2 text-xs max-w-xs leading-relaxed">{error}</p>
-        <button
-          onClick={getFeed}
-          className="mt-6 px-6 py-2.5 rounded-full font-bold bg-white text-black hover:bg-slate-200 transition-all duration-300 cursor-pointer text-xs uppercase tracking-wider shadow-md"
-          type="button"
-        >
-          Try again
-        </button>
-      </div>
-    );
-  }
-
-  if (feed.length === 0) {
-    return (
-      <div className="flex flex-col justify-center items-center min-h-[60vh] text-center px-6">
-        <div className="relative w-40 h-40 flex items-center justify-center mb-8">
-          <div className="radar-wave"></div>
-          <div className="w-16 h-16 rounded-full border border-[#3444DA]/50 p-0.5 z-10 shadow-lg bg-[#16161a]">
-            <img
-              src={currentUser?.photoUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
-              className="w-full h-full rounded-full object-cover"
-              alt="Searching avatar"
-            />
-          </div>
-        </div>
-        <h2 className="text-xl font-bold text-white font-Outfit">No New Developers Found</h2>
-        <p className="text-[#94A3B8] mt-2 text-xs max-w-xs leading-relaxed">
-          You've swiped on everyone in your area. Check back later or expand your profile settings to get matches!
-        </p>
-        <button
-          onClick={getFeed}
-          className="mt-6 px-6 py-2.5 rounded-full font-bold bg-white text-black hover:bg-slate-200 transition-all duration-300 cursor-pointer text-xs uppercase tracking-wider shadow-md"
-          type="button"
-        >
-          Refresh Feed
-        </button>
-      </div>
-    );
-  }
-
-  const top = feed[0];
 
   return (
-    <div className="flex justify-center items-center min-h-[75vh] py-6 px-4">
-      <div className="relative w-full max-w-sm min-h-[540px] animate-fade-in">
-        {feed[1] && (
-          <div className="absolute inset-x-0 top-3 scale-95 opacity-60 pointer-events-none">
-            <UserCard user={feed[1]} preview />
-          </div>
-        )}
-        <div className="relative z-10">
-          <UserCard
-            key={top._id}
-            user={top}
-            onDecision={(data) => {
-              if (typeof data?.message === "string" && data.message.includes("It's a Match")) {
-                setMatch(top);
-              }
-            }}
-          />
-        </div>
-      </div>
-
-      {match && (
-        <div className="fixed inset-0 z-[70] bg-black/70 flex items-center justify-center px-6">
-          <div className="glass-panel max-w-sm w-full rounded-3xl p-8 text-center border border-[#3444DA]/40">
-            <p className="text-[#8ea0ff] text-xs font-bold uppercase tracking-[0.2em]">It's a match</p>
-            <h2 className="text-3xl font-extrabold text-white font-Outfit mt-3">
-              You and {match.firstname} connected
-            </h2>
-            <p className="text-slate-400 text-sm mt-3">
-              You both want to connect. Say hello, or keep meeting developers.
-            </p>
-            <div className="flex flex-col gap-3 mt-6">
-              <Link
-                to={`/chat/${match._id}`}
-                className="py-3 rounded-full bg-[#3444DA] text-white font-bold"
-                onClick={() => setMatch(null)}
-              >
-                Message
-              </Link>
-              <button
-                type="button"
-                className="py-3 rounded-full border border-slate-700 text-slate-200 font-semibold"
-                onClick={() => setMatch(null)}
-              >
-                Keep swiping
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    <section className="dt-page dt-discover-page">
+      <PageHeading eyebrow="THE NEXT GREAT CONNECTION" title="Find your kind of developer." description="Different skills. Shared curiosity. See who you click with.">
+        {Array.isArray(feed) && feed.length > 0 && <span className="dt-count-badge">{feed.length} to discover</span>}
+      </PageHeading>
+      {content}
+      {match && <MatchDialog match={match} currentUser={currentUser} onClose={() => setMatch(null)} />}
+    </section>
   );
 };
 

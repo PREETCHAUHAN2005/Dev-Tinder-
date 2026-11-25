@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import PageHeading from "./ui/PageHeading";
+import Icon from "./ui/Icon";
+import { useState } from "react";
 import UserCard from "./UserCard";
 import axios from "axios";
 import { Base_Url } from "../utils/constants";
@@ -60,182 +62,35 @@ const EditProfile = ({ user }) => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto my-8 px-6">
-      {/* Title */}
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-extrabold tracking-tight text-white font-Outfit">
-          Edit Profile
-        </h1>
-        <p className="text-[#94A3B8] mt-2 text-sm">
-          Customize how other developers see your card in the matchmaking feed.
-        </p>
-        {user.isPremium && (
-          <p className="mt-3 text-xs font-bold uppercase tracking-wider text-amber-300">
-            {user.membershipType || "premium"} member
-          </p>
-        )}
+    <section className="dt-page">
+      <PageHeading eyebrow="MAKE IT YOURS" title="The person behind the code." description="Give other developers a feel for who you are and what you love building.">
+        {user.isPremium && <span className="dt-plan-badge"><Icon name="star" />{user.membershipType || "Premium"} member</span>}
+      </PageHeading>
+      <div className="dt-profile-editor">
+        <form className="dt-panel dt-form dt-editor-form" noValidate onSubmit={(event) => { event.preventDefault(); if (!saving) saveProfile(); }} aria-busy={saving}>
+          <div className="dt-form-section-heading"><span>01</span><div><h2>The basics</h2><p>A face and a name to connect with.</p></div></div>
+          <div className="dt-form-row">
+            <label className="dt-field" htmlFor="profile-firstname">First name<input id="profile-firstname" value={firstname} onChange={(e) => setFirstName(e.target.value)} autoComplete="given-name" /></label>
+            <label className="dt-field" htmlFor="profile-lastname">Last name<input id="profile-lastname" value={lastname} onChange={(e) => setLastName(e.target.value)} autoComplete="family-name" /></label>
+          </div>
+          <div className="dt-form-row">
+            <label className="dt-field" htmlFor="profile-age">Age<input id="profile-age" value={age} type="number" min="18" placeholder="24" onChange={(e) => setAge(e.target.value)} /></label>
+            <label className="dt-field" htmlFor="profile-gender">Gender<select id="profile-gender" value={gender} onChange={(e) => setGender(e.target.value)}><option value="">Select gender</option><option value="male">Male</option><option value="female">Female</option><option value="others">Other</option></select></label>
+          </div>
+          <label className="dt-field" htmlFor="profile-photo">Photo URL<input id="profile-photo" value={photoUrl} type="text" placeholder="https://example.com/you.jpg" onChange={(e) => setPhotoURL(e.target.value)} aria-describedby="profile-photo-hint" /><small id="profile-photo-hint">Add a link to a photo that feels like you.</small></label>
+          <div className="dt-form-section-heading dt-form-section-divider"><span>02</span><div><h2>Your developer story</h2><p>Shared interests make the best icebreakers.</p></div></div>
+          <label className="dt-field" htmlFor="profile-about">About you<textarea id="profile-about" value={About} rows="4" placeholder="What are you building, learning, or curious about?" onChange={(e) => setAbout(e.target.value)} /></label>
+          <label className="dt-field" htmlFor="profile-skills">Skills<input id="profile-skills" value={skillsText} placeholder="React, Node.js, Python, TypeScript" onChange={(e) => setSkillsText(e.target.value)} aria-describedby="profile-skills-hint" /><small id="profile-skills-hint">Separate each skill with a comma.</small></label>
+          {err && <p className="dt-alert dt-alert-error" role="alert"><Icon name="alert" />{String(err).replace("Error: ", "")}</p>}
+          {success && <p className="dt-alert dt-alert-success" role="status"><Icon name="check" />Profile saved. Looking good!</p>}
+          <div className="dt-form-save"><span>Your preview updates as you type.</span><button type="submit" className="dt-button dt-button-primary" disabled={saving}>{saving ? "Saving profile..." : "Save changes"}<Icon name="check" /></button></div>
+        </form>
+        <aside className="dt-live-preview"><div className="dt-preview-heading"><p className="dt-eyebrow">YOUR FIRST IMPRESSION</p><span>Live preview</span></div>
+          <UserCard preview user={{ firstname, lastname, photoUrl, age: age ? Number(age) : undefined, gender, About, skills: skillsText.split(",").map((s) => s.trim()).filter((s) => s.length > 0) }} />
+          <p className="dt-preview-caption">This is how you'll appear in Discover.</p>
+        </aside>
       </div>
-
-      <div className="flex flex-col lg:flex-row gap-10 justify-center items-start">
-        
-        {/* Editor Form */}
-        <div className="w-full lg:max-w-xl bg-[#16161a] p-6 sm:p-8 rounded-2xl border border-slate-850 shadow-xl">
-          <h2 className="text-lg font-bold text-white mb-6 font-Outfit border-b border-slate-800/60 pb-3">
-            Profile Details
-          </h2>
-
-          <div className="space-y-4">
-            
-            {/* Names */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 ml-1">First Name</label>
-                <input
-                  value={firstname}
-                  type="text"
-                  className="w-full bg-[#121214] border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-[#3444DA] focus:ring-1 focus:ring-[#3444DA] transition-all duration-300 text-sm"
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 ml-1">Last Name</label>
-                <input
-                  value={lastname}
-                  type="text"
-                  className="w-full bg-[#121214] border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-[#3444DA] focus:ring-1 focus:ring-[#3444DA] transition-all duration-300 text-sm"
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-              </div>
-            </div>
-
-            {/* Age & Gender */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 ml-1">Age</label>
-                <input
-                  value={age}
-                  type="number"
-                  min="18"
-                  className="w-full bg-[#121214] border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-[#3444DA] focus:ring-1 focus:ring-[#3444DA] transition-all duration-300 text-sm"
-                  placeholder="24"
-                  onChange={(e) => setAge(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 ml-1">Gender</label>
-                <select
-                  value={gender}
-                  className="w-full bg-[#121214] border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 focus:outline-none focus:border-[#3444DA] focus:ring-1 focus:ring-[#3444DA] transition-all duration-300 text-sm"
-                  onChange={(e) => setGender(e.target.value)}
-                >
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="others">Other</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Photo URL */}
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 ml-1">Photo URL</label>
-              <input
-                value={photoUrl}
-                type="text"
-                className="w-full bg-[#121214] border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-[#3444DA] focus:ring-1 focus:ring-[#3444DA] transition-all duration-300 text-sm"
-                placeholder="https://example.com/photo.jpg"
-                onChange={(e) => setPhotoURL(e.target.value)}
-              />
-            </div>
-
-            {/* About Bio */}
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 ml-1">About / Bio</label>
-              <textarea
-                value={About}
-                rows="3"
-                className="w-full bg-[#121214] border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-[#3444DA] focus:ring-1 focus:ring-[#3444DA] transition-all duration-300 text-sm resize-none"
-                placeholder="Talk about your coding journey and interests..."
-                onChange={(e) => setAbout(e.target.value)}
-              />
-            </div>
-
-            {/* Skills */}
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 ml-1">Skills (comma-separated)</label>
-              <input
-                value={skillsText}
-                type="text"
-                className="w-full bg-[#121214] border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-[#3444DA] focus:ring-1 focus:ring-[#3444DA] transition-all duration-300 text-sm"
-                placeholder="react, node.js, python, typescript"
-                onChange={(e) => setSkillsText(e.target.value)}
-              />
-            </div>
-
-          </div>
-
-          {err && (
-            <div className="flex items-center gap-2 mt-4 px-3 py-2 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-xs">
-              <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-              </svg>
-              <span>{err.replace("Error: ", "")}</span>
-            </div>
-          )}
-
-          <div className="mt-8">
-            <button
-              className="w-full py-3 rounded-full font-bold text-white bg-[#3444DA] hover:bg-[#2B39B8] shadow-lg hover:shadow-micro1-active active:scale-[0.98] transition-all duration-150 cursor-pointer flex items-center justify-center gap-2"
-              onClick={saveProfile}
-              disabled={saving}
-            >
-              {saving ? (
-                <>
-                  <span className="loading loading-spinner loading-xs"></span>
-                  <span>Saving Profile...</span>
-                </>
-              ) : (
-                "Save Profile Changes"
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Live Preview Card */}
-        <div className="w-full max-w-sm sticky top-24 shrink-0">
-          <div className="text-left mb-3">
-            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500">Live Card Preview</span>
-          </div>
-          <UserCard
-            preview
-            user={{
-              firstname,
-              lastname,
-              photoUrl,
-              age: age ? Number(age) : undefined,
-              gender,
-              About,
-              skills: skillsText
-                .split(",")
-                .map((s) => s.trim())
-                .filter((s) => s.length > 0),
-            }}
-          />
-        </div>
-
-      </div>
-
-      {success && (
-        <div className="toast toast-bottom toast-end z-50">
-          <div className="alert alert-success bg-emerald-500 border-none text-white font-semibold rounded-2xl shadow-xl flex gap-2">
-            <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>Profile saved successfully!</span>
-          </div>
-        </div>
-      )}
-    </div>
+    </section>
   );
 };
 

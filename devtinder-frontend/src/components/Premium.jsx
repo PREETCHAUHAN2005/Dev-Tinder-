@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import PageHeading from "./ui/PageHeading";
+import StatePanel from "./ui/StatePanel";
+import Icon from "./ui/Icon";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { Base_Url } from "../utils/constants";
@@ -10,12 +14,6 @@ const formatRupees = (amount) =>
     currency: "INR",
     maximumFractionDigits: 0,
   }).format(amount);
-
-const Check = () => (
-  <svg className="w-5 h-5 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-  </svg>
-);
 
 const Premium = () => {
   const dispatch = useDispatch();
@@ -118,101 +116,35 @@ const Premium = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <span className="loading loading-ring loading-lg text-[#3444DA]"></span>
-      </div>
-    );
-  }
+  if (loading) return <section className="dt-page"><StatePanel loading title="Loading memberships" description="Checking your membership details." icon="star" /></section>;
 
   if (isUserPremium) {
     const planName = membershipType === "gold" ? "Gold" : "Silver";
-    return (
-      <div className="max-w-md mx-auto my-16 p-8 glass-panel text-center rounded-3xl border border-slate-700/50 shadow-2xl">
-        <h1 className="text-3xl font-extrabold text-amber-300 mt-2 font-Outfit">{planName} is active</h1>
-        <p className="text-slate-300 mt-3 text-sm leading-relaxed">
-          Your optional {planName} membership is saved on your profile. Feed, matching, and chat stay available either way.
-        </p>
-      </div>
-    );
+    return <section className="dt-page dt-membership-active"><div className="dt-panel"><span className="dt-active-plan-icon"><Icon name="star" /></span><p className="dt-eyebrow">THANKS FOR BEING HERE</p><h1>{planName} looks good on you.</h1><span className="dt-plan-badge"><Icon name="check" />{planName} is active</span><p>Your optional {planName} membership is saved on your profile. Feed, matching, and chat stay available either way.</p><Link className="dt-button dt-button-primary" to="/">Back to Discover<Icon name="arrow" /></Link></div></section>;
   }
 
   const silverPrice = plans?.silver != null ? formatRupees(plans.silver) : "";
   const goldPrice = plans?.gold != null ? formatRupees(plans.gold) : "";
 
   return (
-    <div className="max-w-4xl mx-auto my-12 px-6">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-100 font-Outfit">
-          Upgrade to <span className="bg-tinder-gradient bg-clip-text text-transparent">DevTinder Premium</span>
-        </h1>
-        <p className="text-slate-400 mt-3 text-sm max-w-lg mx-auto leading-relaxed">
-          DevTinder is free. Feed, matching, and chat do not require a plan. Premium is optional and saves a Silver or Gold membership on your profile through Razorpay.
-        </p>
+    <section className="dt-page dt-membership-page">
+      <PageHeading eyebrow="A LITTLE EXTRA, YOUR CHOICE" title="Make yourself at home." description="Discover, connect, and chat for free. Silver and Gold are optional memberships saved on your profile." />
+      {checkoutError && <p className="dt-alert dt-alert-error" role="alert"><Icon name="alert" />{checkoutError}{!plans && <button type="button" onClick={() => { setCheckoutError(""); setLoading(true); verifyPremiumUser(); }}>Try again</button>}</p>}
+      <div className="dt-membership-grid">
+        {[
+          { type: "silver", name: "Silver", price: silverPrice, description: "A simple way to support your developer community." },
+          { type: "gold", name: "Gold", price: goldPrice, description: "A brighter badge for your developer profile." },
+        ].map((plan) => <article className={`dt-plan-card dt-panel dt-plan-${plan.type}`} key={plan.type}>
+          <div className="dt-plan-top"><span className="dt-plan-symbol"><Icon name="star" /></span><span className="dt-count-badge">Optional membership</span></div>
+          <h2>{plan.name}</h2><p className="dt-plan-description">{plan.description}</p>
+          <p className="dt-plan-price">{plan.price || <span>Price unavailable</span>}</p>
+          <div className="dt-plan-rule" />
+          <ul><li><Icon name="check" /><span>{plan.name} badge on your profile</span></li><li><Icon name="check" /><span>Membership saved to your account</span></li><li><Icon name="check" /><span>Feed, matching, and chat stay free</span></li></ul>
+          <button type="button" className={`dt-button ${plan.type === "gold" ? "dt-button-gold" : "dt-button-secondary"} dt-button-full`} onClick={() => handleBuyClick(plan.type)} disabled={Boolean(buying)}>{buying === plan.type ? "Opening checkout..." : `Choose ${plan.name}`}<Icon name="arrow" /></button>
+        </article>)}
       </div>
-
-      {checkoutError && (
-        <p className="mb-6 text-center text-sm text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded-xl px-4 py-3">
-          {checkoutError}
-        </p>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-        <div className="flex flex-col justify-between p-8 rounded-3xl glass-panel border border-slate-700/40 hover:border-slate-600/60 transition-all duration-300 relative overflow-hidden shadow-xl">
-          <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-slate-300 font-Outfit">Silver</h2>
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">Optional</span>
-            </div>
-            <div className="flex items-baseline gap-1 mb-8">
-              <span className="text-4xl font-black text-slate-100 font-Outfit">{silverPrice}</span>
-            </div>
-            <ul className="space-y-4 mb-8">
-              <li className="flex items-center gap-3 text-slate-300 text-sm"><Check /><span>Silver badge on your profile</span></li>
-              <li className="flex items-center gap-3 text-slate-300 text-sm"><Check /><span>Membership saved for later premium features</span></li>
-              <li className="flex items-center gap-3 text-slate-300 text-sm"><Check /><span>Feed, matching, and chat stay free</span></li>
-            </ul>
-          </div>
-          <button
-            onClick={() => handleBuyClick("silver")}
-            disabled={Boolean(buying)}
-            className="w-full py-3 rounded-xl font-bold bg-slate-800 text-slate-200 border border-slate-700 hover:border-slate-500 hover:text-white hover:bg-slate-750 transition-all duration-200 cursor-pointer shadow-md disabled:opacity-50"
-            type="button"
-          >
-            {buying === "silver" ? "Opening checkout..." : "Choose Silver"}
-          </button>
-        </div>
-
-        <div className="flex flex-col justify-between p-8 rounded-3xl glass-panel border border-amber-500/30 hover:border-amber-500/60 transition-all duration-300 relative overflow-hidden shadow-2xl">
-          <div className="absolute -top-1 -right-1 bg-amber-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-wider">
-            Best Value
-          </div>
-          <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-amber-400 font-Outfit">Gold</h2>
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-950/30 text-amber-300 border border-amber-800/40">Optional</span>
-            </div>
-            <div className="flex items-baseline gap-1 mb-8">
-              <span className="text-4xl font-black text-slate-100 font-Outfit">{goldPrice}</span>
-            </div>
-            <ul className="space-y-4 mb-8">
-              <li className="flex items-center gap-3 text-slate-300 text-sm"><Check /><span>Gold badge on your profile</span></li>
-              <li className="flex items-center gap-3 text-slate-300 text-sm"><Check /><span>Membership saved for later premium features</span></li>
-              <li className="flex items-center gap-3 text-slate-300 text-sm"><Check /><span>Feed, matching, and chat stay free</span></li>
-            </ul>
-          </div>
-          <button
-            onClick={() => handleBuyClick("gold")}
-            disabled={Boolean(buying)}
-            className="w-full py-3 rounded-xl font-bold text-slate-950 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-350 hover:to-yellow-400 transition-all duration-200 cursor-pointer shadow-lg shadow-amber-500/10 active:scale-[0.98] disabled:opacity-50"
-            type="button"
-          >
-            {buying === "gold" ? "Opening checkout..." : "Choose Gold"}
-          </button>
-        </div>
-      </div>
-    </div>
+      <p className="dt-payment-caption"><Icon name="shield" />Payments handled through Razorpay. Choose the membership that feels right for you.</p>
+    </section>
   );
 };
 

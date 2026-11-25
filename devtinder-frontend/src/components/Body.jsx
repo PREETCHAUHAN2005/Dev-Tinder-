@@ -1,4 +1,3 @@
-import React from "react";
 import Navbar from "./Navbar";
 import { Outlet, useNavigate } from "react-router-dom";
 import Footer from "./Footer";
@@ -33,9 +32,10 @@ const Body = () => {
     fetchUser();
   }, []);
   return (
-    <div>
+    <div className={`dt-app ${userData ? "dt-authenticated" : "dt-public"}`}>
+      <a href="#main-content" className="dt-skip-link">Skip to content</a>
       <Navbar />
-      <Outlet />
+      <main id="main-content" className="dt-main" tabIndex={-1}><Outlet /></main>
       <Footer />
     </div>
   );

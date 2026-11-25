@@ -1,4 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import Avatar from "./ui/Avatar";
+import PageHeading from "./ui/PageHeading";
+import StatePanel from "./ui/StatePanel";
+import Icon from "./ui/Icon";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
@@ -118,124 +122,52 @@ const Chat = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[50vh]">
-        <span className="loading loading-ring loading-lg text-[#3444DA]"></span>
-      </div>
-    );
+    return <section className="dt-page dt-page-narrow"><PageHeading eyebrow="YOUR CONVERSATIONS" title="Messages" /><StatePanel loading title="Loading your conversations" description="Getting everything ready for your next hello." icon="message" /></section>;
   }
 
   if (!userId) {
     return (
-      <div className="max-w-2xl mx-auto my-10 px-6">
-        <h1 className="text-3xl font-extrabold text-white font-Outfit">Chat</h1>
-        <p className="text-slate-400 text-sm mt-2 mb-8">
-          Messages with developers who accepted your connection.
-        </p>
-        {error && <p className="text-rose-400 text-sm mb-4">{error}</p>}
-        {inbox.length === 0 ? (
-          <div className="text-center py-16 bg-[#16161a] border border-slate-800 rounded-2xl">
-            <h2 className="text-lg font-bold text-slate-200">No conversations yet</h2>
-            <p className="text-slate-400 text-sm mt-2">Match with someone, then open chat from Connections.</p>
-            <Link to="/connections" className="inline-block mt-5 text-[#8ea0ff] font-semibold">
-              View connections
-            </Link>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {inbox.map((row) => (
-              <Link
-                key={row.user._id}
-                to={`/chat/${row.user._id}`}
-                className="flex items-center gap-4 p-4 rounded-2xl bg-[#16161a] border border-slate-800 hover:border-[#3444DA]/50"
-              >
-                <img
-                  src={row.user.photoUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
-                  alt=""
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div className="min-w-0 flex-1 text-left">
-                  <div className="flex items-center justify-between gap-3">
-                    <h2 className="font-bold text-white truncate">
-                      {row.user.firstname} {row.user.lastname}
-                    </h2>
-                    {row.unreadCount > 0 && (
-                      <span className="text-[10px] font-bold bg-[#3444DA] text-white rounded-full px-2 py-0.5">
-                        {row.unreadCount}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-slate-400 text-sm truncate">
-                    {row.lastMessage?.text || "Start the conversation"}
-                  </p>
-                </div>
-              </Link>
-            ))}
+      <section className="dt-page dt-page-narrow">
+        <PageHeading eyebrow="LESS SCROLLING, MORE TALKING" title="Messages" description="Ideas, introductions, and whatever comes next." />
+        {error && <p className="dt-alert dt-alert-error" role="alert"><Icon name="alert" />{error}<button type="button" onClick={loadInbox}>Try again</button></p>}
+        {inbox.length === 0 && !error ? <StatePanel title="Your next hello is out there" description="Once you've connected, start a conversation from Connections." icon="message"><Link className="dt-button dt-button-primary" to="/connections">View connections<Icon name="arrow" /></Link></StatePanel> : (
+          <div className="dt-inbox dt-panel">
+            {inbox.map((row) => <Link key={row.user._id} to={`/chat/${row.user._id}`} className="dt-inbox-row">
+              <Avatar src={row.user.photoUrl} name={`${row.user.firstname} ${row.user.lastname}`} decorative />
+              <div className="dt-inbox-person"><h2>{row.user.firstname} {row.user.lastname}</h2><p>{row.lastMessage?.text || "Start the conversation"}</p></div>
+              {row.unreadCount > 0 && <span className="dt-unread-count" aria-label={`${row.unreadCount} unread messages`}>{row.unreadCount}</span>}
+              <Icon name="arrow" />
+            </Link>)}
           </div>
         )}
-      </div>
+      </section>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto my-6 px-4 flex flex-col min-h-[70vh]">
-      <div className="flex items-center gap-3 mb-4">
-        <Link to="/chat" className="text-slate-400 text-sm hover:text-white">
-          Back
-        </Link>
-        <img
-          src={otherUser?.photoUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
-          alt=""
-          className="w-10 h-10 rounded-full object-cover"
-        />
-        <h1 className="text-lg font-bold text-white font-Outfit">
-          {otherUser ? `${otherUser.firstname} ${otherUser.lastname}` : "Chat"}
-        </h1>
+    <section className="dt-page dt-thread-page">
+      <div className="dt-thread dt-panel">
+        <header className="dt-thread-header">
+          <Link to="/chat" className="dt-icon-button" aria-label="Back to messages"><Icon name="back" /></Link>
+          <Avatar src={otherUser?.photoUrl} name={otherUser ? `${otherUser.firstname} ${otherUser.lastname}` : "Developer"} decorative />
+          <div><h1>{otherUser ? `${otherUser.firstname} ${otherUser.lastname}` : "Conversation"}</h1><p>A conversation worth starting.</p></div>
+        </header>
+        {error && <p className="dt-alert dt-alert-error" role="alert"><Icon name="alert" />{error}</p>}
+        <div ref={listRef} className="dt-message-list" role="log" aria-label="Conversation messages" aria-live="polite">
+          {messages.length === 0 && !error && <div className="dt-chat-icebreaker"><span><Icon name="message" /></span><h2>Start with a hello.</h2><p>Ask what they're building, share an idea, or find some common ground.</p></div>}
+          {messages.map((message) => {
+            const otherId = message.toUserId?._id || message.toUserId;
+            const mine = String(otherId) === String(userId);
+            return <div key={message._id} className={`dt-message-row ${mine ? "dt-message-mine" : ""}`}><div className="dt-message-bubble"><span className="dt-sr-only">{mine ? "You: " : `${otherUser?.firstname || "Developer"}: `}</span>{message.text}</div></div>;
+          })}
+        </div>
+        <form onSubmit={sendMessage} className="dt-message-form" aria-busy={sending}>
+          <label htmlFor="chat-message" className="dt-sr-only">Write a message</label>
+          <input id="chat-message" value={text} onChange={(event) => setText(event.target.value)} maxLength={1000} placeholder="What's on your mind?" autoComplete="off" />
+          <button type="submit" disabled={sending || !text.trim()} className="dt-button dt-button-primary" aria-label={sending ? "Sending message" : "Send message"}><span>{sending ? "Sending..." : "Send"}</span><Icon name="send" /></button>
+        </form>
       </div>
-
-      {error && <p className="text-rose-400 text-sm mb-3">{error}</p>}
-
-      <div
-        ref={listRef}
-        className="flex-1 overflow-y-auto rounded-2xl bg-[#121214] border border-slate-800 p-4 space-y-3 min-h-[420px]"
-      >
-        {messages.length === 0 && !error && (
-          <p className="text-slate-500 text-sm text-center mt-10">Send the first message.</p>
-        )}
-        {messages.map((message) => {
-          const otherId = message.toUserId?._id || message.toUserId;
-          const mine = String(otherId) === String(userId);
-          return (
-            <div key={message._id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-              <div
-                className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${
-                  mine ? "bg-[#3444DA] text-white" : "bg-[#1d1d22] text-slate-100 border border-slate-800"
-                }`}
-              >
-                {message.text}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <form onSubmit={sendMessage} className="mt-4 flex gap-2">
-        <input
-          value={text}
-          onChange={(event) => setText(event.target.value)}
-          maxLength={1000}
-          placeholder="Write a message"
-          className="flex-1 rounded-full bg-[#16161a] border border-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-[#3444DA]"
-        />
-        <button
-          type="submit"
-          disabled={sending || !text.trim()}
-          className="rounded-full bg-[#3444DA] text-white font-bold px-5 disabled:opacity-40"
-        >
-          Send
-        </button>
-      </form>
-    </div>
+    </section>
   );
 };
 
