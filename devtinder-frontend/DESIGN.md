@@ -59,7 +59,7 @@ The typography, exact spacing, dark surfaces, blue accent, sidebar, mobile navig
 
 ## Verification
 
-The workflow `.github/workflows/frontend-design-checks.yml` builds the frontend and runs the checks below. The contract comparison is scoped to this redesign branch so it does not freeze future feature work.
+The workflow `.github/workflows/frontend-design-checks.yml` uses Ubuntu 24.04, builds the frontend, and runs the checks below. Browser tooling is installed separately in CI so the application continues to use the exact dependency versions from its lockfile. The contract comparison is scoped to this redesign branch so it does not freeze future feature work.
 
 ```sh
 cd devtinder-frontend

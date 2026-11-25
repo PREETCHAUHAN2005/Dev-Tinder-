@@ -11,7 +11,7 @@ permissions:
   contents: read
 jobs:
   frontend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     defaults:
       run:
@@ -34,7 +34,11 @@ jobs:
       - name: Compare lint with the existing code
         run: node scripts/check-lint.mjs origin/main
       - name: Install browser test tooling without changing dependencies
-        run: npm install --no-save --package-lock=false @playwright/test@1.56.1
+        run: |
+          npm install --prefix "$RUNNER_TEMP/devtinder-playwright" --no-package-lock --no-audit --no-fund @playwright/test@1.56.1
+          mkdir -p node_modules/@playwright
+          ln -s "$RUNNER_TEMP/devtinder-playwright/node_modules/@playwright/test" node_modules/@playwright/test
+          ln -s "$RUNNER_TEMP/devtinder-playwright/node_modules/.bin/playwright" node_modules/.bin/playwright
       - run: npx playwright install --with-deps chromium
       - name: Desktop and mobile interaction checks
         run: npx playwright test
