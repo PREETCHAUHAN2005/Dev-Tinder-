@@ -106,6 +106,7 @@ button { border: 0; }
 .dt-button-small { min-height: 40px; padding: 8px 16px; }
 .dt-icon-button { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid #343b4e; border-radius: 11px; background: #1d222e; color: #d7dded; flex-shrink: 0; }
 .dt-icon-button:hover { background: #2a3141; color: white; }
+.dt-discover-page { overflow-x: clip; }
 .dt-discovery-layout { display: grid; grid-template-columns: minmax(280px, 394px) minmax(220px, 320px); justify-content: center; align-items: center; gap: clamp(30px, 5vw, 84px); padding: 0 4px 12px; }
 .dt-discovery-stage { min-width: 0; }
 .dt-card-stack { position: relative; }

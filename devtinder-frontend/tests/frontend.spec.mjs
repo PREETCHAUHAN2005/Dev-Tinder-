@@ -86,15 +86,16 @@ test("all existing screens render and fit the viewport", async ({ page }, info) 
     await page.goto(screens[i][0]);
     await expect(page.getByRole("heading", { name: screens[i][1], exact: true })).toBeVisible();
     await noOverflow(page);
-    await page.screenshot({ path: info.outputPath("screen-" + i + ".png"), fullPage: true, animations: "disabled" });
+    await page.screenshot({ path: info.outputPath("screen-" + i + ".jpg"), type: "jpeg", quality: 70, fullPage: true, animations: "disabled" });
   }
   await expect(page.getByRole("navigation", { name: info.project.name === "mobile" ? "Mobile navigation" : "Main navigation", exact: true })).toBeVisible();
   expect(model.pageErrors).toEqual([]);
 });
 
-test("login validates, displays server errors, and preserves the login contract", async ({ page }) => {
+test("login validates, displays server errors, and preserves the login contract", async ({ page }, info) => {
   const model = await setup(page, false);
   await page.goto("/login");
+  await page.screenshot({ path: info.outputPath("login.jpg"), type: "jpeg", quality: 70, fullPage: true, animations: "disabled" });
   await page.getByRole("button", { name: "Log in", exact: true }).click();
   await expect(page.getByRole("alert")).toContainText("Please fill in all fields.");
   expect(calls(model, "POST", "/login")).toHaveLength(0);
@@ -281,10 +282,13 @@ test("image failures and long content fit a 320px viewport", async ({ page }) =>
 });
 
 test("loading feedback respects reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   const model = await setup(page);
   model.delays["GET /user/feed"] = 1000;
   await page.goto("/");
   await expect(page.getByRole("status")).toContainText("Finding your next connection");
   expect(await page.evaluate(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches)).toBeTruthy();
+  const duration = await page.locator(".dt-state-loading").evaluate((element) => getComputedStyle(element, "::after").animationDuration);
+  expect(parseFloat(duration)).toBeLessThan(0.1);
   await expect(page.getByRole("button", { name: "Like Asha" })).toBeVisible();
 });

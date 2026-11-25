@@ -70,17 +70,17 @@ const EditProfile = ({ user }) => {
         <form className="dt-panel dt-form dt-editor-form" noValidate onSubmit={(event) => { event.preventDefault(); if (!saving) saveProfile(); }} aria-busy={saving}>
           <div className="dt-form-section-heading"><span>01</span><div><h2>The basics</h2><p>A face and a name to connect with.</p></div></div>
           <div className="dt-form-row">
-            <label className="dt-field" htmlFor="profile-firstname">First name<input id="profile-firstname" value={firstname} onChange={(e) => setFirstName(e.target.value)} autoComplete="given-name" /></label>
-            <label className="dt-field" htmlFor="profile-lastname">Last name<input id="profile-lastname" value={lastname} onChange={(e) => setLastName(e.target.value)} autoComplete="family-name" /></label>
+            <div className="dt-field"><label htmlFor="profile-firstname">First name</label><input id="profile-firstname" value={firstname} onChange={(e) => setFirstName(e.target.value)} autoComplete="given-name" /></div>
+            <div className="dt-field"><label htmlFor="profile-lastname">Last name</label><input id="profile-lastname" value={lastname} onChange={(e) => setLastName(e.target.value)} autoComplete="family-name" /></div>
           </div>
           <div className="dt-form-row">
-            <label className="dt-field" htmlFor="profile-age">Age<input id="profile-age" value={age} type="number" min="18" placeholder="24" onChange={(e) => setAge(e.target.value)} /></label>
-            <label className="dt-field" htmlFor="profile-gender">Gender<select id="profile-gender" value={gender} onChange={(e) => setGender(e.target.value)}><option value="">Select gender</option><option value="male">Male</option><option value="female">Female</option><option value="others">Other</option></select></label>
+            <div className="dt-field"><label htmlFor="profile-age">Age</label><input id="profile-age" value={age} type="number" min="18" placeholder="24" onChange={(e) => setAge(e.target.value)} /></div>
+            <div className="dt-field"><label htmlFor="profile-gender">Gender</label><select id="profile-gender" value={gender} onChange={(e) => setGender(e.target.value)}><option value="">Select gender</option><option value="male">Male</option><option value="female">Female</option><option value="others">Other</option></select></div>
           </div>
-          <label className="dt-field" htmlFor="profile-photo">Photo URL<input id="profile-photo" value={photoUrl} type="text" placeholder="https://example.com/you.jpg" onChange={(e) => setPhotoURL(e.target.value)} aria-describedby="profile-photo-hint" /><small id="profile-photo-hint">Add a link to a photo that feels like you.</small></label>
+          <div className="dt-field"><label htmlFor="profile-photo">Photo URL</label><input id="profile-photo" value={photoUrl} type="text" placeholder="https://example.com/you.jpg" onChange={(e) => setPhotoURL(e.target.value)} aria-describedby="profile-photo-hint" /><small id="profile-photo-hint">Add a link to a photo that feels like you.</small></div>
           <div className="dt-form-section-heading dt-form-section-divider"><span>02</span><div><h2>Your developer story</h2><p>Shared interests make the best icebreakers.</p></div></div>
-          <label className="dt-field" htmlFor="profile-about">About you<textarea id="profile-about" value={About} rows="4" placeholder="What are you building, learning, or curious about?" onChange={(e) => setAbout(e.target.value)} /></label>
-          <label className="dt-field" htmlFor="profile-skills">Skills<input id="profile-skills" value={skillsText} placeholder="React, Node.js, Python, TypeScript" onChange={(e) => setSkillsText(e.target.value)} aria-describedby="profile-skills-hint" /><small id="profile-skills-hint">Separate each skill with a comma.</small></label>
+          <div className="dt-field"><label htmlFor="profile-about">About you</label><textarea id="profile-about" value={About} rows="4" placeholder="What are you building, learning, or curious about?" onChange={(e) => setAbout(e.target.value)} /></div>
+          <div className="dt-field"><label htmlFor="profile-skills">Skills</label><input id="profile-skills" value={skillsText} placeholder="React, Node.js, Python, TypeScript" onChange={(e) => setSkillsText(e.target.value)} aria-describedby="profile-skills-hint" /><small id="profile-skills-hint">Separate each skill with a comma.</small></div>
           {err && <p className="dt-alert dt-alert-error" role="alert"><Icon name="alert" />{String(err).replace("Error: ", "")}</p>}
           {success && <p className="dt-alert dt-alert-success" role="status"><Icon name="check" />Profile saved. Looking good!</p>}
           <div className="dt-form-save"><span>Your preview updates as you type.</span><button type="submit" className="dt-button dt-button-primary" disabled={saving}>{saving ? "Saving profile..." : "Save changes"}<Icon name="check" /></button></div>

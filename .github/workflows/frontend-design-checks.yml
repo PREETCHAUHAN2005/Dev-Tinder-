@@ -1,8 +1,5 @@
 name: Frontend design checks
 on:
-  push:
-    branches:
-      - codex/devtinder-frontend-design
   pull_request:
     paths:
       - 'devtinder-frontend/**'
@@ -42,6 +39,9 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Desktop and mobile interaction checks
         run: npx playwright test
+      - name: Prepare synthetic review previews
+        if: always()
+        run: node scripts/print-previews.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

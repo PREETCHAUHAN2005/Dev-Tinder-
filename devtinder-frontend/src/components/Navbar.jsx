@@ -66,7 +66,7 @@ const Navbar = () => {
                 <span><strong>{user.firstname} {user.lastname}</strong><small>Your account</small></span>
                 <Icon name="user" />
               </summary>
-              <div className="dt-account-menu">
+              <div className="dt-account-menu" onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>
                 <Link to="/profile"><Icon name="user" />Edit profile</Link>
                 <Link to="/premium"><Icon name="star" />Membership</Link>
                 <button type="button" onClick={handleLogout}><Icon name="logout" />Log out</button>
