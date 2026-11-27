@@ -1,5 +1,11 @@
 # DevTinder frontend redesign
 
+## Interface revision, 27 November 2026
+
+Discovery now gives each developer one card with a portrait, bio, expandable skills, and labeled Pass and Connect buttons. A deliberate horizontal swipe triggers the same action. Graphite surfaces, violet controls, Inter for interface text, and Instrument Serif for display type carry through sign-in, profiles, requests, messaging, and membership. The sign-in form comes first on small screens. Its collaboration photograph is by [Annie Spratt on Unsplash](https://unsplash.com/photos/QckxruozjRg).
+
+The remaining sections document the initial 25 November design and its implementation baseline.
+
 ## Scope and source of truth
 
 The existing repository is the authority for functionality. This change starts at commit `d5565736873eb554dba223596afcdc8c62ae8f28` and restyles the existing React application. Backend files, API URL, Redux modules, route paths, credentials handling, request payloads, Socket.IO events, and Razorpay order/verification contracts are preserved.

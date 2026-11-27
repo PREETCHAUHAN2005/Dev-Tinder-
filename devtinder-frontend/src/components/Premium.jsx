@@ -120,7 +120,7 @@ const Premium = () => {
 
   if (isUserPremium) {
     const planName = membershipType === "gold" ? "Gold" : "Silver";
-    return <section className="dt-page dt-membership-active"><div className="dt-panel"><span className="dt-active-plan-icon"><Icon name="star" /></span><p className="dt-eyebrow">THANKS FOR BEING HERE</p><h1>{planName} looks good on you.</h1><span className="dt-plan-badge"><Icon name="check" />{planName} is active</span><p>Your optional {planName} membership is saved on your profile. Feed, matching, and chat stay available either way.</p><Link className="dt-button dt-button-primary" to="/">Back to Discover<Icon name="arrow" /></Link></div></section>;
+    return <section className="dt-page dt-membership-active"><div className="dt-panel"><span className="dt-active-plan-icon"><Icon name="star" /></span><h1>{planName} membership is active.</h1><p>Your {planName} badge is saved on your profile.</p><Link className="dt-button dt-button-primary" to="/">Back to Discover<Icon name="arrow" /></Link></div></section>;
   }
 
   const silverPrice = plans?.silver != null ? formatRupees(plans.silver) : "";
@@ -128,22 +128,22 @@ const Premium = () => {
 
   return (
     <section className="dt-page dt-membership-page">
-      <PageHeading eyebrow="A LITTLE EXTRA, YOUR CHOICE" title="Make yourself at home." description="Discover, connect, and chat for free. Silver and Gold are optional memberships saved on your profile." />
+      <PageHeading title="Membership" description="Discovery, connections, and chat are free. An optional membership adds a badge to your profile." />
       {checkoutError && <p className="dt-alert dt-alert-error" role="alert"><Icon name="alert" />{checkoutError}{!plans && <button type="button" onClick={() => { setCheckoutError(""); setLoading(true); verifyPremiumUser(); }}>Try again</button>}</p>}
       <div className="dt-membership-grid">
         {[
-          { type: "silver", name: "Silver", price: silverPrice, description: "A simple way to support your developer community." },
-          { type: "gold", name: "Gold", price: goldPrice, description: "A brighter badge for your developer profile." },
+          { type: "silver", name: "Silver", price: silverPrice },
+          { type: "gold", name: "Gold", price: goldPrice },
         ].map((plan) => <article className={`dt-plan-card dt-panel dt-plan-${plan.type}`} key={plan.type}>
-          <div className="dt-plan-top"><span className="dt-plan-symbol"><Icon name="star" /></span><span className="dt-count-badge">Optional membership</span></div>
-          <h2>{plan.name}</h2><p className="dt-plan-description">{plan.description}</p>
+          <div className="dt-plan-top"><span className="dt-plan-symbol"><Icon name="star" /></span></div>
+          <h2>{plan.name}</h2>
           <p className="dt-plan-price">{plan.price || <span>Price unavailable</span>}</p>
           <div className="dt-plan-rule" />
-          <ul><li><Icon name="check" /><span>{plan.name} badge on your profile</span></li><li><Icon name="check" /><span>Membership saved to your account</span></li><li><Icon name="check" /><span>Feed, matching, and chat stay free</span></li></ul>
-          <button type="button" className={`dt-button ${plan.type === "gold" ? "dt-button-gold" : "dt-button-secondary"} dt-button-full`} onClick={() => handleBuyClick(plan.type)} disabled={Boolean(buying)}>{buying === plan.type ? "Opening checkout..." : `Choose ${plan.name}`}<Icon name="arrow" /></button>
+          <ul><li><Icon name="check" /><span>{plan.name} badge on your profile</span></li></ul>
+          <button type="button" className={`dt-button ${plan.type === "gold" ? "dt-button-gold" : "dt-button-secondary"} dt-button-full`} onClick={() => handleBuyClick(plan.type)} disabled={Boolean(buying) || !plan.price}>{buying === plan.type ? "Opening checkout..." : `Choose ${plan.name}`}<Icon name="arrow" /></button>
         </article>)}
       </div>
-      <p className="dt-payment-caption"><Icon name="shield" />Payments handled through Razorpay. Choose the membership that feels right for you.</p>
+      <p className="dt-payment-caption"><Icon name="shield" />Checkout is handled by Razorpay.</p>
     </section>
   );
 };

@@ -10,6 +10,7 @@ const paths = {
   back: <path d="M19 12H5m6-6-6 6 6 6" />,
   check: <path d="m5 12 4 4L19 6" />,
   close: <path d="m6 6 12 12M6 18 18 6" />,
+  plus: <path d="M12 5v14M5 12h14" />,
   heart: <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" />,
   logout: <><path d="M9 5H4v14h5M14 8l4 4-4 4M8 12h10" /></>,
   mail: <><rect x="2" y="4" width="20" height="16" rx="3" /><path d="m2 6 10 7L22 6" /></>,

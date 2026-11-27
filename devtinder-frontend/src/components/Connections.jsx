@@ -2,6 +2,7 @@ import Avatar from "./ui/Avatar";
 import PageHeading from "./ui/PageHeading";
 import StatePanel from "./ui/StatePanel";
 import Icon from "./ui/Icon";
+import Skills from "./ui/Skills";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Base_Url } from "../utils/constants";
@@ -36,24 +37,24 @@ const Connections = () => {
 
   return (
     <section className="dt-page">
-      <PageHeading eyebrow="YOUR DEVELOPER CIRCLE" title="Good people. Great possibilities." description="You've connected. Now start a conversation and see where it goes.">
-        {Array.isArray(connections) && connections.length > 0 && <span className="dt-count-badge">{connections.length} connections</span>}
+      <PageHeading title="Connections" description="Pick up a conversation with someone you’ve connected with.">
+        {Array.isArray(connections) && connections.length > 0 && <span className="dt-count-badge">{connections.length} {connections.length === 1 ? "connection" : "connections"}</span>}
       </PageHeading>
-      {loading ? <StatePanel loading title="Loading your connections" description="Getting your developer circle together." icon="people" /> : <>
+      {loading ? <StatePanel loading title="Loading your connections" icon="people" /> : <>
         {loadError && <StatePanel error title="Couldn't load connections" description={loadError} icon="alert"><button type="button" className="dt-button dt-button-primary" onClick={() => { setLoading(true); fetchConnections(); }}>Try again<Icon name="refresh" /></button></StatePanel>}
-        {!loadError && (!connections || connections.length === 0) && <StatePanel title="Your circle starts with one connection" description="Explore developer profiles and like the people you'd love to build with." icon="people"><Link className="dt-button dt-button-primary" to="/">Discover developers<Icon name="arrow" /></Link></StatePanel>}
+        {!loadError && (!connections || connections.length === 0) && <StatePanel title="No connections yet" description="When a connection request is accepted, you can message each other here." icon="people"><Link className="dt-button dt-button-primary" to="/">Discover developers<Icon name="arrow" /></Link></StatePanel>}
         {connections && connections.length > 0 && <div className="dt-connections-grid">
           {connections.map((connection) => {
             const { _id, firstname, lastname, photoUrl, gender, About, skills } = connection;
             return <article key={_id} className="dt-connection-card dt-panel">
-              <div className="dt-connection-top"><Avatar src={photoUrl} name={`${firstname} ${lastname}`} /><span className="dt-connected-label"><Icon name="check" />Connected</span></div>
+              <div className="dt-connection-top"><Avatar src={photoUrl} name={`${firstname} ${lastname}`} /></div>
               <h2>{firstname} {lastname}</h2>
               {gender && <p className="dt-person-meta">{gender}</p>}
-              <p className="dt-connection-bio">{About || "No bio added yet. A hello is a great place to start."}</p>
-              {skills && skills.length > 0 && <div className="dt-skills">{skills.slice(0, 3).map((skill, index) => <span key={index}>{skill}</span>)}{skills.length > 3 && <span className="dt-skills-more">+{skills.length - 3}</span>}</div>}
+              {About && <p className="dt-connection-bio">{About}</p>}
+              <Skills skills={skills} limit={3} />
               <div className="dt-connection-actions">
                 <Link to={`/chat/${_id}`} className="dt-button dt-button-primary"><Icon name="message" />Chat</Link>
-                <a href={`mailto:${connection.email || ""}`} className="dt-button dt-button-secondary" aria-label={`Email ${firstname}`}><Icon name="mail" />Email</a>
+                {connection.email && <a href={`mailto:${connection.email}`} className="dt-button dt-button-secondary" aria-label={`Email ${firstname}`}><Icon name="mail" />Email</a>}
               </div>
             </article>;
           })}
