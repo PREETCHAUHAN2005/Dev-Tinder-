@@ -26,8 +26,9 @@ jobs:
       - name: Production build
         run: npm run build
       - name: Verify existing application contracts
-        if: github.head_ref == 'codex/devtinder-frontend-design' || github.ref_name == 'codex/devtinder-frontend-design'
-        run: node scripts/check-contracts.mjs origin/main
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: node scripts/check-contracts.mjs "origin/$BASE_REF"
       - name: Compare lint with the existing code
         run: node scripts/check-lint.mjs origin/main
       - name: Install browser test tooling without changing dependencies
@@ -36,7 +37,7 @@ jobs:
           mkdir -p node_modules/@playwright
           ln -s "$RUNNER_TEMP/devtinder-playwright/node_modules/@playwright/test" node_modules/@playwright/test
           ln -s "$RUNNER_TEMP/devtinder-playwright/node_modules/.bin/playwright" node_modules/.bin/playwright
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install chromium
       - name: Desktop and mobile interaction checks
         run: npx playwright test
       - uses: actions/upload-artifact@v4
