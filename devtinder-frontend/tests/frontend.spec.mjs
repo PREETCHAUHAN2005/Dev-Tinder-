@@ -317,7 +317,8 @@ test("long skill lists expand without swiping at four viewport widths", async ({
   const summary = page.locator(".dt-card-front .dt-more-skills summary");
   for (const width of [360, 768, 1280, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    await summary.click();
+    await summary.focus();
+    await page.keyboard.press("Enter");
     await expect(page.getByLabel("Additional skills").getByText("Go", { exact: true })).toBeVisible();
     await noOverflow(page);
     await summary.click();

@@ -3,7 +3,7 @@ export default function Skills({ skills, limit = 4 }) {
   const chip = (skill, index) => <li key={index}>{skill}</li>;
   return (
     <div className="dt-skill-group">
-      <ul className="dt-skills" aria-label="Skills">{skills.slice(0, limit).map(chip)}</ul>
+      <ul className="dt-skills" aria-label="Profile skills">{skills.slice(0, limit).map(chip)}</ul>
       {skills.length > limit && (
         <details className="dt-more-skills">
           <summary>{skills.length - limit} more {skills.length - limit === 1 ? "skill" : "skills"}</summary>
