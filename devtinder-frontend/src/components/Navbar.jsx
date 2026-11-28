@@ -1,4 +1,6 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import Icon from "./ui/Icon";
+import Avatar from "./ui/Avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { Base_Url } from "../utils/constants";
 import axios from "axios";
@@ -6,14 +8,43 @@ import { removeUser } from "../utils/userSlice";
 import { clearFeed } from "../utils/feedSlice";
 import { removeConnection } from "../utils/connectionSlice";
 import { clearRequests } from "../utils/requestSlice";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const user = useSelector((store) => store.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
+
+  useEffect(() => {
+    function openMenu() { return document.querySelector("details[data-account-menu][open]"); }
+    function closeOutside(event) {
+      const menu = openMenu();
+      if (menu && !menu.contains(event.target)) menu.open = false;
+    }
+    function closeOnEscape(event) {
+      const menu = openMenu();
+      if (event.key === "Escape" && menu) {
+        menu.open = false;
+        menu.querySelector("summary")?.focus();
+      }
+    }
+    document.addEventListener("pointerdown", closeOutside);
+    document.addEventListener("focusin", closeOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOutside);
+      document.removeEventListener("focusin", closeOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
+
   const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    setLogoutError("");
     try {
       await axios.post(Base_Url + "/logout", {}, { withCredentials: true });
       dispatch(removeUser());
@@ -21,106 +52,82 @@ const Navbar = () => {
       dispatch(removeConnection());
       dispatch(clearRequests());
       return navigate("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
+    } catch {
+      setLogoutError("Log out failed. Please try again.");
+    } finally {
+      setLoggingOut(false);
     }
   };
 
+  const links = [
+    { to: "/", label: "Discover", icon: "discover" },
+    { to: "/connections", label: "Connections", icon: "people" },
+    { to: "/requests", label: "Requests", icon: "inbox" },
+    { to: "/chat", label: "Messages", icon: "message" },
+    { to: "/profile", label: "My profile", icon: "user" },
+  ];
+  const navigation = (mobile = false) => (
+    <nav className={mobile ? "dt-mobile-navigation" : "dt-navigation"} aria-label={mobile ? "Mobile navigation" : "Main navigation"}>
+      {links.map(({ to, label, icon }) => (
+        <NavLink key={to} to={to} end={to === "/"} className={({ isActive }) => `dt-nav-link ${isActive ? "dt-nav-active" : ""}`}>
+          <Icon name={icon} /><span>{label}</span>
+        </NavLink>
+      ))}
+    </nav>
+  );
+
   return (
-    <div className="navbar sticky top-0 z-50 bg-[#09090B]/85 backdrop-blur-md border-b border-slate-800/40 px-6 py-3 transition-all duration-300 mb-6">
-      {/* Brand Logo */}
-      <div className="flex-1">
-        <Link
-          to="/"
-          className="flex items-center gap-1 hover:opacity-85 transition-opacity"
-        >
-          <span className="text-xl font-bold tracking-tight text-white font-Outfit lowercase">
-            devtinder<span className="text-[#3444DA] font-extrabold font-Outfit text-2xl">.</span>
-          </span>
+    <>
+      <header className={user ? "dt-sidebar" : "dt-public-header"}>
+        <Link to="/" className="dt-brand" aria-label="DevTinder home">
+          <span className="dt-brand-mark"><Icon name="code" /></span>
+          <span>devtinder<span className="dt-brand-dot">.</span></span>
         </Link>
-      </div>
-
-      {/* Right Side Section */}
-      <div className="flex gap-4 items-center">
-        {user && (
-          <div className="flex items-center gap-5">
-            {/* Welcome Text */}
-            <span className="text-xs font-semibold text-slate-400 tracking-wide uppercase hidden md:block">
-              Welcome, <span className="text-slate-100 font-bold">{user.firstname}</span>
-            </span>
-            {user.isPremium ? (
-              <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-amber-400/15 text-amber-300 border border-amber-400/30">
-                {user.membershipType || "premium"}
-              </span>
-            ) : (
-              <Link
-                to="/premium"
-                className="hidden sm:inline text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border border-slate-700 text-slate-300 hover:border-[#3444DA] hover:text-white"
-              >
-                Upgrade
-              </Link>
-            )}
-
-            {/* Avatar Dropdown */}
-            <div className="dropdown dropdown-end">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn btn-ghost btn-circle avatar border border-slate-800 hover:border-[#3444DA] p-[2px] transition-all duration-300 shadow-lg"
-              >
-                <div className="w-8 rounded-full overflow-hidden">
-                  <img
-                    alt="user profile"
-                    src={user.photoUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+        {user ? (
+          <>
+            {navigation()}
+            <Link to="/premium" className="dt-premium-link">
+              <span className="dt-premium-icon"><Icon name="star" /></span>
+              <span><strong>{user.isPremium ? `${user.membershipType || "Premium"} member` : "DevTinder Premium"}</strong><small>{user.isPremium ? "View your membership" : "View memberships"}</small></span>
+              <Icon name="arrow" />
+            </Link>
+            <details className="dt-account" data-account-menu>
+              <summary aria-label="Account menu">
+                <Avatar src={user.photoUrl} name={user.firstname} decorative />
+                <span><strong>{user.firstname} {user.lastname}</strong><small>Your account</small></span>
+                <Icon name="user" />
+              </summary>
+              <div className="dt-account-menu" onClick={(event) => { if (event.target.closest("a")) event.currentTarget.closest("details").open = false; }}>
+                <Link to="/profile"><Icon name="user" />Edit profile</Link>
+                <Link to="/premium"><Icon name="star" />Membership</Link>
+                <button type="button" disabled={loggingOut} onClick={handleLogout}><Icon name="logout" />{loggingOut ? "Logging out…" : "Log out"}</button>
+                {logoutError && <p className="dt-alert dt-alert-error" role="alert">{logoutError}</p>}
               </div>
-
-              <ul
-                tabIndex={0}
-                className="menu menu-sm dropdown-content mt-3 w-52 p-2 shadow-2xl rounded-xl border border-slate-800/70 bg-[#121214] z-[1]"
-              >
-                <li>
-                  <Link to="/profile" className="flex justify-between items-center py-2.5 px-3 hover:bg-slate-800/60 rounded-lg text-slate-300">
-                    <span>Profile Settings</span>
-                    <span className="badge badge-sm bg-[#3444DA] text-white border-none text-[9px] uppercase tracking-wider px-1.5 py-0.5">Edit</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/connections" className="py-2.5 px-3 hover:bg-slate-800/60 rounded-lg text-slate-300">
-                    My Connections
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/chat" className="py-2.5 px-3 hover:bg-slate-800/60 rounded-lg text-slate-300">
-                    Chat
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/requests" className="py-2.5 px-3 hover:bg-slate-800/60 rounded-lg text-slate-300">
-                    Requests
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/premium" className="py-2.5 px-3 hover:bg-slate-800/60 rounded-lg text-amber-500 font-semibold flex items-center gap-1">
-                    {user.isPremium ? `${user.membershipType || "Premium"} plan` : "Upgrade"}
-                  </Link>
-                </li>
-                <div className="divider my-1 border-slate-800/50"></div>
-                <li>
-                  <a onClick={handleLogout} className="py-2.5 px-3 hover:bg-rose-500/10 text-rose-400 hover:text-rose-300 rounded-lg">
-                    Logout
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
+            </details>
+          </>
+        ) : (
+          <Link to="/login" className="dt-button dt-button-secondary dt-button-small">Log in <Icon name="arrow" /></Link>
         )}
-      </div>
-    </div>
+      </header>
+      {user && (
+        <>
+          <div className="dt-mobile-topbar">
+            <Link to="/" className="dt-brand"><span className="dt-brand-mark"><Icon name="code" /></span><span>devtinder<span className="dt-brand-dot">.</span></span></Link>
+            <Link to="/premium" className="dt-icon-button" aria-label="View membership"><Icon name="star" /></Link>
+            <details className="dt-mobile-account" data-account-menu>
+              <summary aria-label="Account menu"><Avatar src={user.photoUrl} name={user.firstname} decorative /></summary>
+              <div className="dt-account-menu" onClick={(event) => { if (event.target.closest("a")) event.currentTarget.closest("details").open = false; }}>
+                <Link to="/profile"><Icon name="user" />Edit profile</Link>
+                <button type="button" disabled={loggingOut} onClick={handleLogout}><Icon name="logout" />{loggingOut ? "Logging out…" : "Log out"}</button>
+                {logoutError && <p className="dt-alert dt-alert-error" role="alert">{logoutError}</p>}
+              </div>
+            </details>
+          </div>
+          {navigation(true)}
+        </>
+      )}
+    </>
   );
 };
 
 export default Navbar;
-
