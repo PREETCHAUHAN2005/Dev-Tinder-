@@ -122,15 +122,15 @@ const Chat = () => {
   };
 
   if (loading) {
-    return <section className="dt-page dt-page-narrow"><PageHeading eyebrow="YOUR CONVERSATIONS" title="Messages" /><StatePanel loading title="Loading your conversations" description="Getting everything ready for your next hello." icon="message" /></section>;
+    return <section className="dt-page dt-page-narrow"><PageHeading title="Messages" /><StatePanel loading title="Loading your conversations" icon="message" /></section>;
   }
 
   if (!userId) {
     return (
       <section className="dt-page dt-page-narrow">
-        <PageHeading eyebrow="LESS SCROLLING, MORE TALKING" title="Messages" description="Ideas, introductions, and whatever comes next." />
+        <PageHeading title="Messages" description="Conversations with the developers you’ve connected with." />
         {error && <p className="dt-alert dt-alert-error" role="alert"><Icon name="alert" />{error}<button type="button" onClick={loadInbox}>Try again</button></p>}
-        {inbox.length === 0 && !error ? <StatePanel title="Your next hello is out there" description="Once you've connected, start a conversation from Connections." icon="message"><Link className="dt-button dt-button-primary" to="/connections">View connections<Icon name="arrow" /></Link></StatePanel> : (
+        {inbox.length === 0 && !error ? <StatePanel title="No conversations yet" description="Once you've connected, start a conversation from Connections." icon="message"><Link className="dt-button dt-button-primary" to="/connections">View connections<Icon name="arrow" /></Link></StatePanel> : (
           <div className="dt-inbox dt-panel">
             {inbox.map((row) => <Link key={row.user._id} to={`/chat/${row.user._id}`} className="dt-inbox-row">
               <Avatar src={row.user.photoUrl} name={`${row.user.firstname} ${row.user.lastname}`} decorative />
@@ -150,10 +150,10 @@ const Chat = () => {
         <header className="dt-thread-header">
           <Link to="/chat" className="dt-icon-button" aria-label="Back to messages"><Icon name="back" /></Link>
           <Avatar src={otherUser?.photoUrl} name={otherUser ? `${otherUser.firstname} ${otherUser.lastname}` : "Developer"} decorative />
-          <div><h1>{otherUser ? `${otherUser.firstname} ${otherUser.lastname}` : "Conversation"}</h1><p>A conversation worth starting.</p></div>
+          <div><h1>{otherUser ? `${otherUser.firstname} ${otherUser.lastname}` : "Conversation"}</h1></div>
         </header>
         {error && <p className="dt-alert dt-alert-error" role="alert"><Icon name="alert" />{error}</p>}
-        <div ref={listRef} className="dt-message-list" role="log" aria-label="Conversation messages" aria-live="polite">
+        <div ref={listRef} className="dt-message-list" role="log" aria-label="Conversation messages" aria-live="polite" tabIndex={0}>
           {messages.length === 0 && !error && <div className="dt-chat-icebreaker"><span><Icon name="message" /></span><h2>Start with a hello.</h2><p>Ask what they're building, share an idea, or find some common ground.</p></div>}
           {messages.map((message) => {
             const otherId = message.toUserId?._id || message.toUserId;
@@ -163,7 +163,7 @@ const Chat = () => {
         </div>
         <form onSubmit={sendMessage} className="dt-message-form" aria-busy={sending}>
           <label htmlFor="chat-message" className="dt-sr-only">Write a message</label>
-          <input id="chat-message" value={text} onChange={(event) => setText(event.target.value)} maxLength={1000} placeholder="What's on your mind?" autoComplete="off" />
+          <input id="chat-message" value={text} onChange={(event) => setText(event.target.value)} maxLength={1000} placeholder="Write a message…" autoComplete="off" />
           <button type="submit" disabled={sending || !text.trim()} className="dt-button dt-button-primary" aria-label={sending ? "Sending message" : "Send message"}><span>{sending ? "Sending..." : "Send"}</span><Icon name="send" /></button>
         </form>
       </div>

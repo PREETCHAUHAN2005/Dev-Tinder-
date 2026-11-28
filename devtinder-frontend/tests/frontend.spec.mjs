@@ -78,9 +78,9 @@ function calls(model, method, path) { return model.calls.filter((call) => call.m
 test("all existing screens render and fit the viewport", async ({ page }, info) => {
   const model = await setup(page);
   const screens = [
-    ["/", "Find your kind of developer."], ["/profile", "The person behind the code."],
-    ["/connections", "Good people. Great possibilities."], ["/requests", "New connections, waiting on you."],
-    ["/chat", "Messages"], ["/chat/dev-2", "Asha Jain"], ["/premium", "Make yourself at home."], ["/contact", "Contact"],
+    ["/", "Discover"], ["/profile", "Your profile"],
+    ["/connections", "Connections"], ["/requests", "Connection requests"],
+    ["/chat", "Messages"], ["/chat/dev-2", "Asha Jain"], ["/premium", "Membership"], ["/contact", "Contact"],
   ];
   for (let i = 0; i < screens.length; i++) {
     await page.goto(screens[i][0]);
@@ -139,14 +139,14 @@ test("profile saves the same data and the preview has no decision actions", asyn
   expect(model.calls.filter((call) => call.path.startsWith("/request/send/"))).toHaveLength(0);
 });
 
-test("pass and like preserve status values and a final-card match remains visible", async ({ page }) => {
+test("Pass and Connect preserve status values and a final-card match remains visible", async ({ page }) => {
   const model = await setup(page);
   await page.goto("/");
   await page.getByRole("button", { name: "Pass on Asha", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Like Rohan", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Connect with Rohan", exact: true })).toBeVisible();
   expect(calls(model, "POST", "/request/send/ignored/dev-2")).toHaveLength(1);
   model.match = true;
-  await page.getByRole("button", { name: "Like Rohan", exact: true }).click();
+  await page.getByRole("button", { name: "Connect with Rohan", exact: true }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
   await expect(dialog.getByRole("link", { name: "Send a message" })).toHaveAttribute("href", "/chat/dev-3");
@@ -164,10 +164,10 @@ test("failed decisions retain the card and provide retry feedback", async ({ pag
   model.failures["POST /request/send/interested/dev-2"] = { status: 500, message: "Fixture failure" };
   model.delays["POST /request/send/interested/dev-2"] = 600;
   await page.goto("/");
-  await page.getByRole("button", { name: "Like Asha", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Like Asha", exact: true })).toBeDisabled();
+  await page.getByRole("button", { name: "Connect with Asha", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Connect with Asha", exact: true })).toBeDisabled();
   await expect(page.getByRole("alert")).toContainText("Your decision was not saved.");
-  await expect(page.getByRole("button", { name: "Like Asha", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Connect with Asha", exact: true })).toBeEnabled();
   expect(model.feed[0]._id).toBe("dev-2");
 });
 
@@ -193,7 +193,7 @@ test("load errors can be retried and empty states offer existing destinations", 
   const model = await setup(page);
   const cases = [
     { page: "/", api: "/user/feed", collection: "feed", error: "Couldn't load developers", empty: "You're all caught up", button: "Try again" },
-    { page: "/connections", api: "/user/connections", collection: "connections", error: "Couldn't load connections", empty: "Your circle starts with one connection", button: "Try again" },
+    { page: "/connections", api: "/user/connections", collection: "connections", error: "Couldn't load connections", empty: "No connections yet", button: "Try again" },
     { page: "/requests", api: "/user/request/received", collection: "requests", error: "Couldn't load requests", empty: "You're up to date", button: "Try again" },
   ];
   for (const item of cases) {
@@ -211,7 +211,7 @@ test("load errors can be retried and empty states offer existing destinations", 
   await expect(page.getByRole("alert")).toContainText("Couldn't load test conversations.");
   delete model.failures["GET /chat"];
   await page.getByRole("button", { name: "Try again" }).click();
-  await expect(page.getByRole("heading", { name: "Your next hello is out there" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "No conversations yet" })).toBeVisible();
 });
 
 test("chat preserves trimming, sending, and failure recovery", async ({ page }) => {
@@ -249,7 +249,7 @@ for (const type of ["silver", "gold"]) {
     const checkout = await page.evaluate(() => ({ amount: window.__checkout.amount, currency: window.__checkout.currency, order: window.__checkout.order_id }));
     expect(checkout).toEqual({ amount: model.plans[type] * 100, currency: "INR", order: "order_test" });
     await page.evaluate(() => window.__checkout.handler({ razorpay_order_id: "order_test", razorpay_payment_id: "payment_test", razorpay_signature: "signature_test" }));
-    await expect(page.getByRole("heading", { name: (type === "gold" ? "Gold" : "Silver") + " looks good on you." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: (type === "gold" ? "Gold" : "Silver") + " membership is active." })).toBeVisible();
     expect(calls(model, "POST", "/payment/verify").at(-1).body).toEqual({ razorpay_order_id: "order_test", razorpay_payment_id: "payment_test", razorpay_signature: "signature_test" });
   });
 }
@@ -257,7 +257,7 @@ for (const type of ["silver", "gold"]) {
 test("logout clears the cached feed before the next login", async ({ page }, info) => {
   const model = await setup(page);
   await page.goto("/");
-  await expect(page.getByRole("button", { name: "Like Asha" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Connect with Asha" })).toBeVisible();
   await page.locator(info.project.name === "mobile" ? ".dt-mobile-account summary" : ".dt-account summary").click();
   await page.getByRole("button", { name: "Log out", exact: true }).click();
   await expect(page).toHaveURL(/\/login$/);
@@ -265,8 +265,8 @@ test("logout clears the cached feed before the next login", async ({ page }, inf
   await page.getByLabel("Email address", { exact: true }).fill("preet@example.test");
   await page.getByLabel("Password", { exact: true }).fill("Example-password-123");
   await page.getByRole("button", { name: "Log in", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Like Rohan" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Like Asha" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Connect with Rohan" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Connect with Asha" })).toHaveCount(0);
 });
 
 test("image failures and long content fit a 320px viewport", async ({ page }) => {
@@ -290,5 +290,63 @@ test("loading feedback respects reduced motion", async ({ page }) => {
   expect(await page.evaluate(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches)).toBeTruthy();
   const duration = await page.locator(".dt-state-loading").evaluate((element) => getComputedStyle(element, "::after").animationDuration);
   expect(parseFloat(duration)).toBeLessThan(0.1);
-  await expect(page.getByRole("button", { name: "Like Asha" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Connect with Asha" })).toBeVisible();
+});
+
+test("a canceled swipe never sends a decision", async ({ page }) => {
+  const model = await setup(page);
+  await page.goto("/");
+  const media = page.locator(".dt-card-front .dt-profile-media");
+  await expect(media).toBeVisible();
+  const box = await media.boundingBox();
+  expect(box).not.toBeNull();
+  const x = box.x + 20;
+  const y = box.y + box.height / 2;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 150, y, { steps: 6 });
+  await media.dispatchEvent("pointercancel", { pointerType: "mouse", pointerId: 1, isPrimary: true });
+  await page.mouse.up();
+  await expect(page.getByRole("button", { name: "Connect with Asha" })).toBeEnabled();
+  expect(model.calls.filter((call) => call.path.startsWith("/request/send/"))).toHaveLength(0);
+});
+
+test("long skill lists expand without swiping at four viewport widths", async ({ page }) => {
+  const model = await setup(page);
+  await page.goto("/");
+  const summary = page.locator(".dt-card-front .dt-more-skills summary");
+  for (const width of [360, 768, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await summary.focus();
+    await page.keyboard.press("Enter");
+    await expect(page.getByLabel("Additional skills").getByText("Go", { exact: true })).toBeVisible();
+    await noOverflow(page);
+    await summary.click();
+  }
+  expect(model.calls.filter((call) => call.path.startsWith("/request/send/"))).toHaveLength(0);
+});
+
+test("a horizontal swipe sends the decision and a short drag keeps the card", async ({ page }) => {
+  const model = await setup(page);
+  await page.goto("/");
+  const media = page.locator(".dt-card-front .dt-profile-media");
+  const drag = async (dx) => {
+    await expect(media).toBeVisible();
+    const box = await media.boundingBox();
+    const x = box.x + box.width / 2;
+    const y = box.y + Math.min(box.height / 2, 100);
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x + dx, y, { steps: 8 });
+    await page.mouse.up();
+  };
+  await drag(40);
+  await expect(page.getByRole("button", { name: "Connect with Asha" })).toBeEnabled();
+  expect(model.calls.filter((call) => call.path.startsWith("/request/send/"))).toHaveLength(0);
+  await drag(135);
+  await expect(page.getByRole("button", { name: "Pass on Rohan" })).toBeVisible();
+  await drag(-135);
+  await expect(page.getByRole("heading", { name: "You're all caught up" })).toBeVisible();
+  expect(calls(model, "POST", "/request/send/interested/dev-2")).toHaveLength(1);
+  expect(calls(model, "POST", "/request/send/ignored/dev-3")).toHaveLength(1);
 });

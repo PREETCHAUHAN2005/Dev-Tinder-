@@ -78,23 +78,17 @@ const Login = () => {
     finally { setSubmitting(false); }
   };
 
+  // Collaboration photograph by Annie Spratt on Unsplash, QckxruozjRg.
+  const photo = "https://images.unsplash.com/photo-1522071820081-009f0129c71c";
+  const imageAt = (width) => photo + "?auto=format&fit=crop&q=75&w=" + width;
+
   return (
     <section className="dt-auth-layout">
-      <div className="dt-auth-story">
-        <p className="dt-eyebrow">MEET. CONNECT. BUILD.</p>
-        <h1>Your next great<br />project starts<br />with a <span>hello.</span></h1>
-        <p>Find developers who share your curiosity. Make a connection. Build something together.</p>
-        <div className="dt-auth-art" aria-hidden="true">
-          <div className="dt-code-window">
-            <div className="dt-window-controls"><i /><i /><i /><span>the-next-big-thing.js</span></div>
-            <div className="dt-code-lines"><p><span>const</span> connection = {"{"}</p><p>  curiosity: <em>true</em>,</p><p>  possibilities: <em>"endless"</em>,</p><p>  startsWith: <em>"hello"</em></p><p>{"}"};</p></div>
-            <div className="dt-window-footer"><Icon name="code" /><span>Better, together.</span></div>
-          </div>
-          <div className="dt-hello-chip"><Icon name="message" />Hey! What are you building?</div>
-        </div>
-      </div>
-      <div className="dt-auth-card dt-panel">
-        <div className="dt-auth-card-heading"><span className="dt-brand-mark"><Icon name="code" /></span><p className="dt-eyebrow">YOUR DEVELOPER COMMUNITY</p><h2>{isLoginForm ? "Good to see you." : "Let's build connections."}</h2><p>{isLoginForm ? "Log in and pick up where you left off." : "A few details, then you're ready to meet your people."}</p></div>
+      <div className="dt-auth-card">
+        <header className="dt-auth-card-heading">
+          <h1>{isLoginForm ? "Welcome back." : "Join DevTinder."}</h1>
+          <p>{isLoginForm ? "Log in to meet developers and pick up your conversations." : "Create an account to meet other developers."}</p>
+        </header>
         <form onSubmit={submit} noValidate className="dt-form" aria-busy={submitting}>
           {!isLoginForm && <>
             <div className="dt-form-row">
@@ -103,14 +97,25 @@ const Login = () => {
             </div>
             <div className="dt-field"><label htmlFor="signup-gender">Gender</label><select id="signup-gender" value={gender} onChange={(e) => setGender(e.target.value)} disabled={submitting}><option value="">Select gender</option><option value="male">Male</option><option value="female">Female</option><option value="others">Other</option></select></div>
           </>}
-          <div className="dt-field"><label htmlFor="auth-email">Email address</label><input id="auth-email" value={email} type="email" autoComplete="email" placeholder="you@example.com" onChange={(e) => setEmail(e.target.value)} aria-invalid={Boolean(error) || undefined} aria-describedby={error ? "auth-error" : undefined} disabled={submitting} /></div>
-          <div className="dt-field"><label htmlFor="auth-password">Password</label><input id="auth-password" value={password} type="password" autoComplete={isLoginForm ? "current-password" : "new-password"} placeholder="Enter your password" onChange={(e) => setPassword(e.target.value)} aria-describedby={error ? "auth-error" : undefined} disabled={submitting} /></div>
+          <div className="dt-field"><label htmlFor="auth-email">Email address</label><input id="auth-email" value={email} type="email" autoComplete="email" placeholder="you@example.com" onChange={(e) => setEmail(e.target.value)} aria-describedby={error ? "auth-error" : undefined} disabled={submitting} /></div>
+          <div className="dt-field"><label htmlFor="auth-password">Password</label><input id="auth-password" value={password} type="password" autoComplete={isLoginForm ? "current-password" : "new-password"} placeholder="Enter your password" onChange={(e) => setPassword(e.target.value)} aria-describedby={[!isLoginForm && "password-hint", error && "auth-error"].filter(Boolean).join(" ") || undefined} disabled={submitting} />
+            {!isLoginForm && <small id="password-hint">At least 8 characters, including uppercase, lowercase, a number, and a symbol.</small>}
+          </div>
           {error && <p className="dt-alert dt-alert-error" role="alert" id="auth-error"><Icon name="alert" />{error.replace("Error: ", "")}</p>}
-          <button type="submit" disabled={submitting} className="dt-button dt-button-primary dt-button-full">{submitting ? "Please wait..." : isLoginForm ? "Log in" : "Create account"}<Icon name="arrow" /></button>
-          <div className="dt-auth-divider"><span>{isLoginForm ? "New around here?" : "Already part of the community?"}</span></div>
-          <button type="button" disabled={submitting} className="dt-button dt-button-secondary dt-button-full" onClick={() => { setIsLoginForm(!isLoginForm); setError(""); }}>{isLoginForm ? "Create an account" : "Back to log in"}</button>
+          <button type="submit" disabled={submitting} className="dt-button dt-button-primary dt-button-full">{submitting ? (isLoginForm ? "Logging in…" : "Creating account…") : isLoginForm ? "Log in" : "Create account"}<Icon name="arrow" /></button>
+          <div className="dt-auth-switch"><span>{isLoginForm ? "New to DevTinder?" : "Already a member?"}</span>{" "}
+          <button type="button" disabled={submitting} className="dt-text-button" onClick={() => { setIsLoginForm(!isLoginForm); setError(""); }}>{isLoginForm ? "Create an account" : "Back to log in"}</button></div>
         </form>
-        <p className="dt-auth-caption"><Icon name="code" />A place for your kind of people.</p>
+      </div>
+      <div className="dt-auth-story">
+        <img className="dt-story-photo" src={imageAt(960)} alt="" width="960" height="880" loading="lazy" decoding="async"
+          srcSet={[480, 768, 960, 1440].map((w) => imageAt(w) + " " + w + "w").join(", ")}
+          sizes="(max-width: 760px) 100vw, (max-width: 1200px) 54vw, 650px"
+          onError={(event) => { event.currentTarget.hidden = true; }} />
+        <div className="dt-story-copy">
+          <h2>Find your next <em>collaborator.</em></h2>
+          <p>Get to know the people behind the projects you’d like to build.</p>
+        </div>
       </div>
     </section>
   );

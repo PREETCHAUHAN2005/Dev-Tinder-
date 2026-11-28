@@ -59,19 +59,19 @@ const Requests = () => {
 
   return (
     <section className="dt-page dt-page-narrow">
-      <PageHeading eyebrow="SOMEONE SAID HELLO" title="New connections, waiting on you." description="Get to know the developers who'd like to connect.">
+      <PageHeading title="Connection requests" description="Choose which developers you’d like to connect with.">
         {Array.isArray(requests) && requests.length > 0 && <span className="dt-count-badge">{requests.length} pending</span>}
       </PageHeading>
       {reviewNotice && <p className="dt-alert dt-alert-success" role="status"><Icon name="check" />{reviewNotice}</p>}
       {reviewError && <p className="dt-alert dt-alert-error" role="alert"><Icon name="alert" />{reviewError}</p>}
-      {loading ? <StatePanel loading title="Loading your requests" description="Let's see who's looking to connect." icon="inbox" /> : <>
+      {loading ? <StatePanel loading title="Loading your requests" icon="inbox" /> : <>
         {loadError && <StatePanel error title="Couldn't load requests" description={loadError} icon="alert"><button type="button" className="dt-button dt-button-primary" onClick={() => { setLoading(true); fetchRequests(); }}>Try again<Icon name="refresh" /></button></StatePanel>}
-        {!loadError && (!requests || requests.length === 0) && <StatePanel title="You're up to date" description="No pending requests right now. Your next connection could be one profile away." icon="inbox"><Link to="/" className="dt-button dt-button-primary">Explore Discover<Icon name="arrow" /></Link></StatePanel>}
+        {!loadError && (!requests || requests.length === 0) && <StatePanel title="You're up to date" description="New connection requests will appear here." icon="inbox"><Link to="/" className="dt-button dt-button-primary">Explore Discover<Icon name="arrow" /></Link></StatePanel>}
         {requests && requests.length > 0 && <div className="dt-request-list">{requests.map((request) => {
           const { firstname, lastname, photoUrl, gender, About } = request.fromUserId;
           return <article className="dt-request-card dt-panel" key={request._id}>
             <Avatar src={photoUrl} name={`${firstname} ${lastname}`} />
-            <div className="dt-request-person"><p className="dt-eyebrow">WANTS TO CONNECT</p><h2>{firstname} {lastname}</h2>{gender && <p className="dt-person-meta">{gender}</p>}<p className="dt-request-bio">{About || "No bio added yet."}</p></div>
+            <div className="dt-request-person"><h2>{firstname} {lastname}</h2>{gender && <p className="dt-person-meta">{gender}</p>}{About && <p className="dt-request-bio">{About}</p>}</div>
             <div className="dt-request-actions">
               <button type="button" className="dt-button dt-button-primary" disabled={Boolean(reviewing)} onClick={() => reviewRequest("accepted", request._id)}><Icon name="check" />{reviewing === "accepted:" + request._id ? "Accepting..." : "Accept"}</button>
               <button type="button" className="dt-button dt-button-secondary" disabled={Boolean(reviewing)} onClick={() => reviewRequest("rejected", request._id)}><Icon name="close" />{reviewing === "rejected:" + request._id ? "Declining..." : "Decline"}</button>
